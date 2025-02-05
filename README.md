@@ -1,12 +1,14 @@
 Credentials :
 
-Staff :
-username - admin
-password - admin
+**Staff:**
 
-Student :
-username - admin2
-password - admin2
+- Username: admin  
+- Password: admin  
+
+**Student:**
+
+- Username: admin2  
+- Password: admin2
 
 ![image](https://github.com/user-attachments/assets/0b612707-c0b8-4f1b-b348-4b2f8fd0972e)
 ![image](https://github.com/user-attachments/assets/6a066724-3f59-41b3-9d01-709257b83ca0)
