@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #5046e5;
+      --primary-hover: #4038b6;
+      --danger-color: #ef4444;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --background: #f9fafb;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      transition: border-color 0.15s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(80, 70, 229, 0.1);
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .button-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .button-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .button-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .question-item {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+    }
+
+    .question-item:hover {
+      border-color: var(--primary-color);
+    }
+
+    .question-content {
+      flex: 1;
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-footer {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .dragging {
+      opacity: 0.5;
+      background: var(--background);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        margin: 1rem auto;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .question-item {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .question-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">
+        <a href="#">Manage Forms</a>
+    </div>
+    <div class="greeting">
+        <span>Welcome, Staff!</span>
+    </div>
+</div>
+
+  <div class="container">
+    <div class="card">
+      <h1>Create Form</h1>
+      
+      <div class="form-group">
+        <label for="form-title">Form Title</label>
+        <input type="text" id="form-title" placeholder="Enter a title for your form">
+      </div>
+
+      <div class="form-group">
+        <label for="form-description">Form Description</label>
+        <textarea id="form-description" placeholder="Describe your form"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <button class="button button-primary" onclick="openQuestionModal()">Add Question</button>
+      </div>
+
+      <div class="questions-list" id="questions-container">
+        <!-- Questions will be rendered here -->
+      </div>
+    </div>
+
+    <div class="form-group">
+      <button class="button button-primary" onclick="saveForm()" style="width: 100%;">Save Form</button>
+    </div>
+  </div>
+
+  <!-- Question Modal -->
+  <div class="modal" id="question-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Question</h2>
+      </div>
+
+      <div class="form-group">
+        <label for="question-text">Question Text</label>
+        <input type="text" id="question-text" placeholder="Enter your question">
+      </div>
+
+      <div class="form-group">
+        <label for="question-type">Question Type</label>
+        <select id="question-type">
+          <option value="SINGLE_WORD">Single Word</option>
+          <option value="MULTI_WORD">Multi Word</option>
+          <option value="TRUE_FALSE">True/False</option>
+      </select>
+      </div>
+
+      <div class="form-group">
+        <label for="correct-answer">Correct Answer</label>
+        <input type="text" id="correct-answer" placeholder="Enter the correct answer">
+      </div>
+
+      <div class="form-group">
+        <label for="points">Points</label>
+        <input type="number" id="points" value="1" min="1">
+      </div>
+
+      <div class="modal-footer">
+        <button class="button button-primary" onclick="addQuestion()">Add Question</button>
+        <button class="button" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let questions = [];
+    let currentQuestion = null;
+
+    // Open question modal
+    function openQuestionModal() {
+      document.getElementById('question-modal').style.display = 'flex';
+    }
+
+    // Close question modal
+    function closeModal() {
+      document.getElementById('question-modal').style.display = 'none';
+      clearQuestionFields();
+    }
+
+    // Clear the input fields
+    function clearQuestionFields() {
+      document.getElementById('question-text').value = '';
+      document.getElementById('question-type').value = 'text';
+      document.getElementById('correct-answer').value = '';
+      document.getElementById('points').value = '1';
+    }
+
+    // Add a new question
+    function addQuestion() {
+      const text = document.getElementById('question-text').value;
+      const type = document.getElementById('question-type').value;
+      const correctAnswer = document.getElementById('correct-answer').value;
+      const points = document.getElementById('points').value;
+
+      if (!text || !correctAnswer) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      const question = {
+        text,
+        type,
+        correctAnswer,
+        points
+      };
+
+      questions.push(question);
+      renderQuestions();
+      closeModal();
+    }
+
+    // Render questions in the UI
+    function renderQuestions() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = '';
+      questions.forEach((question, index) => {
+        const questionElement = document.createElement('div');
+        questionElement.classList.add('question-item');
+        questionElement.setAttribute('draggable', true);
+        questionElement.setAttribute('data-index', index);
+        questionElement.addEventListener('dragstart', handleDragStart);
+        questionElement.addEventListener('dragover', handleDragOver);
+        questionElement.addEventListener('drop', handleDrop);
+        
+        questionElement.innerHTML = `
+    <span class="question-title">${question.text}</span>
+    <button class="button" onclick="editQuestion(${index})">Edit</button>
+    <button class="button" onclick="deleteQuestion(${index})">Delete</button>
+`;
+
+        container.appendChild(questionElement);
+      });
+    }
+
+    // Edit a question
+    function editQuestion(index) {
+      const question = questions[index];
+      currentQuestion = index;
+      document.getElementById('question-text').value = question.text;
+      document.getElementById('question-type').value = question.type;
+      document.getElementById('correct-answer').value = question.correctAnswer;
+      document.getElementById('points').value = question.points;
+      openQuestionModal();
+    }
+
+    // Delete a question
+    function deleteQuestion(index) {
+      questions.splice(index, 1);
+      renderQuestions();
+    }
+
+    // Save the form
+    function saveForm() {
+    const formData = {
+        title: document.getElementById('form-title').value,
+        description: document.getElementById('form-description').value,
+        questions: questions.map(q => ({
+            text: q.text,
+            type: q.type,
+            correct_answer: q.correctAnswer,
+            points: parseInt(q.points)
+        }))
+    };
+
+    if (!formData.title) {
+        alert('Please enter a form title');
+        return;
+    }
+
+    if (formData.questions.length === 0) {
+        alert('Please add at least one question');
+        return;
+    }
+
+    console.log('Sending form data:', formData); // Add this for debugging
+
+    fetch('/api/forms/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(error => {
+                throw new Error(error.error || 'Unknown error occurred');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert('Form created successfully!');
+        window.location.href = '/dashboard';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(`Error creating form: ${error.message}`);
+    });
+}
+
+    // Drag and drop handling
+    let draggedItem = null;
+
+    function handleDragStart(event) {
+      draggedItem = event.target;
+      setTimeout(() => {
+        draggedItem.classList.add('dragging');
+      }, 0);
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      const currentItem = event.target;
+      if (currentItem.classList.contains('question-item') && draggedItem !== currentItem) {
+        currentItem.style.border = '1px solid #2980b9';
+      }
+    }
+
+    function handleDrop(event) {
+      event.preventDefault();
+      const target = event.target;
+      target.style.border = 'none';
+      if (target.classList.contains('question-item') && draggedItem !== target) {
+        const draggedIndex = draggedItem.getAttribute('data-index');
+        const targetIndex = target.getAttribute('data-index');
+
+        const draggedQuestion = questions[draggedIndex];
+        questions.splice(draggedIndex, 1);
+        questions.splice(targetIndex, 0, draggedQuestion);
+
+        renderQuestions();
+      }
+      draggedItem.classList.remove('dragging');
+    }
+  </script>
+
+</body>
+</html>

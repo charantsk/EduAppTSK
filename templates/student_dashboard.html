@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Forms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5046e5;
+            --primary-hover: #4038b6;
+            --danger-color: #ef4444;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --background: #f9fafb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .form-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .form-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h1>Manage Forms</h1>
+            <table id="forms-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Form rows will be dynamically populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal to view form details -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>View Form</h2>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic form content will go here -->
+            </div>
+            <div class="modal-footer">
+                <button class="button button-danger" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formsData = [
+            { 
+                "id": 1,
+                "title": "Basic Test",
+                "description": "Surprise test for students",
+                "questions": [
+                    { "id": 1, "text": "What is 1 + 1?", "type": "single_word", "points": 1 }
+                ]
+            },
+            { 
+                "id": 2,
+                "title": "Advanced Math",
+                "description": "Math problems for advanced students",
+                "questions": [
+                    { "id": 2, "text": "What is 2 + 2?", "type": "single_word", "points": 2 }
+                ]
+            }
+        ];
+
+        // Function to render the forms in the table
+        function renderForms() {
+            const tableBody = document.querySelector("#forms-table tbody");
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            formsData.forEach(form => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${form.title}</td>
+                    <td>${form.description}</td>
+                    <td><a href="#" class="form-link" onclick="openModal(${form.id})">View</a></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Open the modal to view form details
+        function openModal(formId) {
+            const form = formsData.find(f => f.id === formId);
+            if (form) {
+                const modalBody = document.querySelector("#modalBody");
+                modalBody.innerHTML = `
+                    <h3>${form.title}</h3>
+                    <p><strong>Description:</strong> ${form.description}</p>
+                    <h4>Questions:</h4>
+                    <ul>
+                        ${form.questions.map(q => `<li><strong>${q.text}</strong> (Points: ${q.points})</li>`).join('')}
+                    </ul>
+                `;
+                document.getElementById("formModal").style.display = 'flex';
+            }
+        }
+
+        // Close the modal
+        function closeModal() {
+            document.getElementById("formModal").style.display = 'none';
+        }
+
+        // Initial render
+        renderForms();
+    </script>
+
+</body>
+
+</html>

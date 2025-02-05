@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5046e5;
+            --primary-hover: #4038b6;
+            --danger-color: #ef4444;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --background: #f9fafb;
+            --hero-bg: url('https://via.placeholder.com/1920x1080/0044cc/ffffff?text=Educational+App+Hero');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: var(--hero-bg) center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 10rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 5rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            background-color: #2d2d2d;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Welcome to Our Educational Platform</h1>
+            <p>Empower your learning with interactive courses, tools, and resources for all ages.</p>
+            <a href="#features" class="cta-button">Explore Features</a>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="feature-card">
+                <h3>Interactive Courses</h3>
+                <p>Learn at your own pace with interactive courses that cater to every learning style.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Expert Tutors</h3>
+                <p>Get personalized help from expert tutors who guide you every step of the way.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Learning Resources</h3>
+                <p>Access a vast library of resources including articles, videos, and exercises.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Track Your Progress</h3>
+                <p>Stay motivated and track your learning progress with detailed reports and statistics.</p>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer">
+            <p>&copy; 2025 Educational Platform. All Rights Reserved. <br> <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </footer>
+    </div>
+</body>
+
+</html>
