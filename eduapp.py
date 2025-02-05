@@ -28,6 +28,7 @@ class QuestionType(enum.Enum):
     MULTI_WORD = "multi_word"
     TRUE_FALSE = "true_false"
 
+
 # Database Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -242,13 +243,25 @@ def delete_form(form_id):
 @login_required
 def get_all_forms():
     forms = Form.query.all()
-    return jsonify([{
-        'id': form.id,
-        'title': form.title,
-        'description': form.description,
-        'created_by': form.created_by,
-        'created_at': form.created_at.isoformat()
-    } for form in forms])
+    forms_data = []
+    
+    for form in forms:
+        form_data = {
+            'id': form.id,
+            'title': form.title,
+            'description': form.description,
+            'created_by': form.created_by,
+            'created_at': form.created_at.isoformat()
+        }
+        
+        # Add submission status for students
+        if current_user.role == UserRole.STUDENT:
+            form_data['already_submitted'] = has_submitted_form(current_user.id, form.id)
+            
+        forms_data.append(form_data)
+    
+    return jsonify(forms_data)
+
 
 @app.route('/api/forms/<int:form_id>', methods=['GET'])
 @login_required
@@ -279,6 +292,12 @@ def get_form_details(form_id):
 @app.route('/api/forms/<int:form_id>/submit', methods=['POST'])
 @login_required
 def submit_form(form_id):
+    # Check if the user has already submitted this form
+    if has_submitted_form(current_user.id, form_id):
+        return jsonify({
+            "error": "You have already submitted this form"
+        }), 403
+    
     form = Form.query.get_or_404(form_id)
     data = request.get_json()
     
@@ -322,7 +341,13 @@ def delete_submission(submission_id):
 
 
 
-
+def has_submitted_form(user_id, form_id):
+    """Check if a user has already submitted a particular form."""
+    submission = Submission.query.filter_by(
+        user_id=user_id,
+        form_id=form_id
+    ).first()
+    return submission is not None
 
 
 # HTML Routes
@@ -338,7 +363,6 @@ def login_page():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
     return render_template('login.html')
-
 
 
 @app.route('/dashboard')
@@ -366,13 +390,40 @@ def create_form_page():
 @login_required
 @requires_role(UserRole.STAFF)
 def view_form_page():
-    return render_template('view_form.html')
+    form_id = request.args.get('form_id')
+    if not form_id:
+        return redirect(url_for('dashboard'))
+    return render_template('view_form.html', form_id=form_id)
+
 
 @app.route('/student/submit_form')
 @login_required
 @requires_role(UserRole.STUDENT)
 def submit_form_page():
-    return render_template('submit_form.html')
+    form_id = request.args.get('form_id')
+    if not form_id:
+        return redirect(url_for('dashboard'))
+    
+    # Check if the student has already submitted this form
+    if has_submitted_form(current_user.id, int(form_id)):
+        return render_template('error.html', 
+                             message="You have already submitted this form"), 403
+    
+    return render_template('submit_form.html', form_id=form_id)
+
+
+@app.route('/api/user/submissions')
+@login_required
+def get_user_submissions():
+    submissions = Submission.query.filter_by(user_id=current_user.id).all()
+    return jsonify([{
+        'id': sub.id,
+        'form_id': sub.form_id,
+        'form_title': Form.query.get(sub.form_id).title,
+        'submitted_at': sub.submitted_at.isoformat(),
+        'score': sub.score
+    } for sub in submissions])
+
 
 if __name__ == '__main__':
     with app.app_context():

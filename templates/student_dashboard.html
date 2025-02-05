@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Forms</title>
+    <title>Student Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
     <style>
         :root {
-            --primary-color: #5046e5;
-            --primary-hover: #4038b6;
+            --primary-color: #3b6dbf;
+            --primary-hover: #30559d;
             --danger-color: #ef4444;
             --text-primary: #111827;
             --text-secondary: #6b7280;
@@ -30,8 +31,24 @@
             line-height: 1.5;
         }
 
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
         .container {
-            max-width: 1000px;
+            max-width: 100%;
             margin: 2rem auto;
             padding: 0 1rem;
         }
@@ -49,6 +66,12 @@
             font-weight: 600;
             margin-bottom: 2rem;
             color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
         }
 
         table {
@@ -116,14 +139,55 @@
             justify-content: flex-end;
             gap: 1rem;
         }
+
+        /* New Form Button */
+        .new-form-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            margin-top: 1.5rem;
+        }
+
+        .new-form-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .loading-message,
+    .error-message {
+        text-align: center;
+        padding: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .error-message {
+        color: var(--danger-color);
+    }
     </style>
 </head>
 
 <body>
 
+     <!-- Navbar -->
+     <div class="navbar">
+        <div class="logo">
+            <a href="#">Student Dashboard</a>
+        </div>
+        <div class="greeting">
+            <span>Welcome, Student!</span>
+        </div>
+    </div>
+
     <div class="container">
         <div class="card">
-            <h1>Manage Forms</h1>
+            <h1>Student Dashboard</h1>
+            <h2>Your Assigned Forms:</h2>
             <table id="forms-table">
                 <thead>
                     <tr>
@@ -139,82 +203,79 @@
         </div>
     </div>
 
-    <!-- Modal to view form details -->
-    <div id="formModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>View Form</h2>
-            </div>
-            <div id="modalBody">
-                <!-- Dynamic form content will go here -->
-            </div>
-            <div class="modal-footer">
-                <button class="button button-danger" onclick="closeModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const formsData = [
-            { 
-                "id": 1,
-                "title": "Basic Test",
-                "description": "Surprise test for students",
-                "questions": [
-                    { "id": 1, "text": "What is 1 + 1?", "type": "single_word", "points": 1 }
-                ]
-            },
-            { 
-                "id": 2,
-                "title": "Advanced Math",
-                "description": "Math problems for advanced students",
-                "questions": [
-                    { "id": 2, "text": "What is 2 + 2?", "type": "single_word", "points": 2 }
-                ]
+    <!-- Replace the existing script section with this: -->
+<script>
+    // Function to fetch forms from the API
+    async function fetchForms() {
+        try {
+            const response = await fetch('/api/forms');
+            if (!response.ok) {
+                throw new Error('Failed to fetch forms');
             }
-        ];
+            const forms = await response.json();
+            renderForms(forms);
+        } catch (error) {
+            console.error('Error fetching forms:', error);
+            // You might want to show an error message to the user
+            document.querySelector("#forms-table tbody").innerHTML = `
+                <tr>
+                    <td colspan="3">Error loading forms. Please try again later.</td>
+                </tr>
+            `;
+        }
+    }
 
-        // Function to render the forms in the table
-        function renderForms() {
-            const tableBody = document.querySelector("#forms-table tbody");
-            tableBody.innerHTML = ''; // Clear existing rows
+    // Function to render the forms in the table
+    // Function to render the forms in the table
+function renderForms(forms) {
+    const tableBody = document.querySelector("#forms-table tbody");
+    tableBody.innerHTML = ''; // Clear existing rows
 
-            formsData.forEach(form => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${form.title}</td>
-                    <td>${form.description}</td>
-                    <td><a href="#" class="form-link" onclick="openModal(${form.id})">View</a></td>
-                `;
-                tableBody.appendChild(row);
-            });
+    if (forms.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="3">No forms available at the moment.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    forms.forEach(form => {
+        const row = document.createElement('tr');
+        
+        // Determine the action button based on submission status
+        let actionButton;
+        if (form.already_submitted) {
+            actionButton = `<button disabled class="submitted-button">Submitted</button>`;
+        } else {
+            actionButton = `<a href="/student/submit_form?form_id=${form.id}" class="form-link">View</a>`;
         }
 
-        // Open the modal to view form details
-        function openModal(formId) {
-            const form = formsData.find(f => f.id === formId);
-            if (form) {
-                const modalBody = document.querySelector("#modalBody");
-                modalBody.innerHTML = `
-                    <h3>${form.title}</h3>
-                    <p><strong>Description:</strong> ${form.description}</p>
-                    <h4>Questions:</h4>
-                    <ul>
-                        ${form.questions.map(q => `<li><strong>${q.text}</strong> (Points: ${q.points})</li>`).join('')}
-                    </ul>
-                `;
-                document.getElementById("formModal").style.display = 'flex';
-            }
-        }
+        row.innerHTML = `
+            <td>${form.title}</td>
+            <td>${form.description}</td>
+            <td>${actionButton}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
 
-        // Close the modal
-        function closeModal() {
-            document.getElementById("formModal").style.display = 'none';
-        }
+    // Add loading state
+    function showLoading() {
+        const tableBody = document.querySelector("#forms-table tbody");
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="3">Loading forms...</td>
+            </tr>
+        `;
+    }
 
-        // Initial render
-        renderForms();
-    </script>
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        showLoading();
+        fetchForms();
+    });
+</script>
 
 </body>
 

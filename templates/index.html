@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educational Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Educational Platform 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #5046e5;
-            --primary-hover: #4038b6;
-            --danger-color: #ef4444;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --background: #f9fafb;
-            --hero-bg: url('https://via.placeholder.com/1920x1080/0044cc/ffffff?text=Educational+App+Hero');
+            --primary-color: #6366F1;
+            --primary-hover: #4F46E5; 
+            --secondary-color: #10B981;
+            --background: #F8FAFC;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --card-bg: #FFFFFF;
         }
 
         * {
@@ -28,134 +27,356 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--background);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .container {
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu {
+            display: none;
+            cursor: pointer;
         }
 
         .hero {
-            background: var(--hero-bg) center/cover no-repeat;
-            color: white;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3') center/cover no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 10rem 0;
+            padding: 4rem 1rem;
+            margin-top: 0;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero h1 {
-            font-size: 3rem;
-            font-weight: 600;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: white;
             margin-bottom: 1.5rem;
+            line-height: 1.2;
         }
 
         .hero p {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #E5E7EB;
             margin-bottom: 2rem;
         }
 
         .cta-button {
             background-color: var(--primary-color);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1rem 2.5rem;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 500;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            display: inline-block;
         }
 
         .cta-button:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .features-section {
+            width: 100%;
+            padding: 5rem 0;
+            background-color: var(--background);
         }
 
         .features {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            margin-top: 5rem;
         }
 
         .feature-card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
         }
 
         .feature-card h3 {
             font-size: 1.5rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
         .feature-card p {
             color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .footer {
-            background-color: #2d2d2d;
-            color: white;
-            padding: 2rem 0;
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 3rem 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
             text-align: center;
         }
 
         .footer p {
-            font-size: 0.875rem;
+            font-size: 1.1rem;
+            line-height: 2;
         }
 
         .footer a {
-            color: var(--primary-color);
+            color: #8B5CF6;
             text-decoration: none;
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .footer a:hover {
-            text-decoration: underline;
+            color: #A78BFA;
+        }
+
+        @media (max-width: 768px) {
+
+
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                padding: 1rem;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero {
+                min-height: 100vh;
+                padding: 3rem 1rem;
+            }
+
+            .features {
+                padding: 3rem 1rem;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Welcome to Our Educational Platform</h1>
-            <p>Empower your learning with interactive courses, tools, and resources for all ages.</p>
-            <a href="#features" class="cta-button">Explore Features</a>
-        </section>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">EduPlatform</a>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
 
-        <!-- Features Section -->
-        <section id="features" class="features">
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Transform Your Learning Journey</h1>
+            <p>Discover a new way of learning with our interactive platform designed for modern education.</p>
+            <a href="{{ url_for('login_page') }}" class="cta-button">Login</a>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <div class="features">
             <div class="feature-card">
+                <i class="fa-solid fa-graduation-cap feature-icon"></i>
                 <h3>Interactive Courses</h3>
-                <p>Learn at your own pace with interactive courses that cater to every learning style.</p>
+                <p>Engage with dynamic content and learn at your own pace with our interactive learning modules.</p>
             </div>
             <div class="feature-card">
+                <i class="fa-solid fa-chalkboard-user feature-icon"></i>
                 <h3>Expert Tutors</h3>
-                <p>Get personalized help from expert tutors who guide you every step of the way.</p>
+                <p>Connect with experienced educators who provide personalized guidance and support.</p>
             </div>
             <div class="feature-card">
-                <h3>Learning Resources</h3>
-                <p>Access a vast library of resources including articles, videos, and exercises.</p>
+                <i class="fa-solid fa-book-open feature-icon"></i>
+                <h3>Rich Resources</h3>
+                <p>Access a comprehensive library of learning materials, videos, and practice exercises.</p>
             </div>
             <div class="feature-card">
-                <h3>Track Your Progress</h3>
-                <p>Stay motivated and track your learning progress with detailed reports and statistics.</p>
+                <i class="fa-solid fa-chart-line feature-icon"></i>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your learning journey with detailed analytics and performance insights.</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer Section -->
-        <footer class="footer">
-            <p>&copy; 2025 Educational Platform. All Rights Reserved. <br> <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-        </footer>
-    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Educational Platform. All Rights Reserved.</p>
+            <p><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a> • <a href="#">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Feature cards animation on scroll
+        const cards = document.querySelectorAll('.feature-card');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+
+        // Navbar scroll behavior
+        const navbar = document.querySelector('.navbar');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll <= 0) {
+                navbar.style.transform = 'translateY(0)';
+                return;
+            }
+            
+            if (currentScroll > lastScroll && !navLinks.classList.contains('active')) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+    </script>
 </body>
-
 </html>

@@ -166,44 +166,93 @@
     </div>
 
     <script>
-        // Sample form data (replace with your form API call)
-        const formData = {
-            "id": 1,
-            "title": "Basic Test",
-            "description": "surprise test for students",
-            "questions": [
-                {
-                    "id": 1,
-                    "text": "What is 1 + 1?",
-                    "type": "single_word",
-                    "points": 1
-                }
+        // Get the form ID from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const formId = urlParams.get('form_id');
+    
+        if (!formId) {
+            alert('No form ID provided');
+            window.location.href = '/dashboard';
+        }
+    
+        // Fetch form details from the API
+        fetch(`/api/forms/${formId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin' // Important for sending cookies with request
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch form details');
+            }
+            return response.json();
+        })
+        .then(formData => {
+            // Set form title and description
+            document.getElementById('form-title').textContent = formData.title;
+            document.getElementById('form-description').textContent = formData.description;
+    
+            // Calculate and display total points
+            const totalPoints = formData.questions.reduce((sum, question) => sum + question.points, 0);
+            document.getElementById('total-points').textContent = `Total Maximum Points: ${totalPoints}`;
+    
+            // Render the form
+            renderForm(formData);
+    
+            // Update form submission handler
+            document.getElementById('form-submit').addEventListener('submit', function(event) {
+                event.preventDefault();
                 
-            ]
-        };
-
-        // Set form title and description
-        document.getElementById('form-title').textContent = formData.title;
-        document.getElementById('form-description').textContent = formData.description;
-
-        // Calculate and display total points
-        const totalPoints = formData.questions.reduce((sum, question) => sum + question.points, 0);
-        document.getElementById('total-points').textContent = `Total Maximum Points: ${totalPoints}`;
-
-        // Dynamically render questions based on form data
+                const responses = {};
+                formData.questions.forEach(question => {
+                    const answer = document.querySelector(`[name="question_${question.id}"]`).value;
+                    responses[question.id] = answer;
+                });
+    
+                // Submit the form
+                fetch(`/api/forms/${formId}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ responses }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Form submission failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(`Form submitted successfully! Your score: ${data.score}%`);
+                    window.location.href = '/dashboard';
+                })
+                .catch(error => {
+                    alert('Error submitting the form: ' + error.message);
+                });
+            });
+        })
+        .catch(error => {
+            alert('Error loading form: ' + error.message);
+            window.location.href = '/dashboard';
+        });
+    
+        // Keep the renderForm function as is
         function renderForm(form) {
             const formElement = document.getElementById('form-submit');
             formElement.innerHTML = ''; // Clear existing form elements
-
-            // Loop through each question and add input fields accordingly
+    
             form.questions.forEach(question => {
                 const formGroup = document.createElement('div');
                 formGroup.classList.add('form-group');
-
+    
                 const label = document.createElement('label');
                 label.innerHTML = `${question.text} <span class="points">(${question.points} point${question.points > 1 ? 's' : ''})</span>`;
                 formGroup.appendChild(label);
-
+    
                 let input;
                 if (question.type === 'single_word') {
                     input = document.createElement('input');
@@ -227,12 +276,11 @@
                     optionNo.textContent = 'No';
                     input.appendChild(optionNo);
                 }
-
+    
                 formGroup.appendChild(input);
                 formElement.insertBefore(formGroup, formElement.lastElementChild);
             });
-
-            // Add submit button
+    
             const submitGroup = document.createElement('div');
             submitGroup.classList.add('form-group');
             const submitButton = document.createElement('button');
@@ -242,36 +290,6 @@
             submitGroup.appendChild(submitButton);
             formElement.appendChild(submitGroup);
         }
-
-        // Handle form submission
-        document.getElementById('form-submit').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const responses = {};
-            formData.questions.forEach(question => {
-                const answer = document.querySelector(`[name="question_${question.id}"]`).value;
-                responses[question.id] = answer;
-            });
-
-            // Make an API call to submit the form (replace with actual API URL)
-            fetch(`/api/forms/${formData.id}/submit`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ responses }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Form submitted successfully!');
-            })
-            .catch(error => {
-                alert('Error submitting the form.');
-            });
-        });
-
-        // Render the form on page load
-        renderForm(formData);
     </script>
 </body>
 </html>
