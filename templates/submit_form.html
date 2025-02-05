@@ -135,12 +135,9 @@
             font-weight: 600;
             font-size: 1rem;
         }
-
     </style>
 </head>
 <body>
-
-    <!-- Navbar -->
     <div class="navbar">
         <div class="logo">
             <a href="#">Student Dashboard</a>
@@ -150,14 +147,12 @@
         </div>
     </div>
 
-
     <div class="container">
         <div class="card">
             <h1 id="form-title"></h1>
             <h2 id="form-description"></h2>
             <div id="total-points" class="total-points"></div>
             <form id="form-submit" method="POST">
-                <!-- Form fields will be injected here -->
                 <div class="form-group">
                     <button type="submit" class="button">Submit</button>
                 </div>
@@ -166,22 +161,91 @@
     </div>
 
     <script>
+        let formData = null;
+        let isSubmitting = false;
+
+        // Function to collect form responses
+        function collectResponses() {
+            const responses = {};
+            if (formData && formData.questions) {
+                formData.questions.forEach(question => {
+                    const inputElement = document.querySelector(`[name="question_${question.id}"]`);
+                    if (inputElement) {
+                        responses[question.id] = inputElement.value;
+                    }
+                });
+            }
+            return responses;
+        }
+
+        // Function to submit form
+        async function submitForm(responses) {
+            if (isSubmitting) return; // Prevent multiple submissions
+            isSubmitting = true;
+
+            try {
+                const response = await fetch(`/api/forms/${formId}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ responses }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Form submission failed');
+                }
+
+                const data = await response.json();
+                alert(`Form submitted successfully! Your score: ${data.score}%`);
+                window.location.href = '/dashboard';
+            } catch (error) {
+                alert('Error submitting the form: ' + error.message);
+            } finally {
+                isSubmitting = false;
+            }
+        }
+
+        // Auto-submit handler
+        function handleAutoSubmit() {
+            const responses = collectResponses();
+            if (Object.keys(responses).length > 0) {
+                submitForm(responses);
+            }
+        }
+
+        // Add event listeners for page leave
+        window.addEventListener('beforeunload', function(e) {
+            handleAutoSubmit();
+            // Modern browsers don't show custom messages anymore
+            e.preventDefault();
+            e.returnValue = '';
+        });
+
+        // Also handle visibility change for tab switching
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                handleAutoSubmit();
+            }
+        });
+
         // Get the form ID from the URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const formId = urlParams.get('form_id');
-    
+
         if (!formId) {
             alert('No form ID provided');
             window.location.href = '/dashboard';
         }
-    
+
         // Fetch form details from the API
         fetch(`/api/forms/${formId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: 'same-origin' // Important for sending cookies with request
+            credentials: 'same-origin'
         })
         .then(response => {
             if (!response.ok) {
@@ -189,70 +253,40 @@
             }
             return response.json();
         })
-        .then(formData => {
-            // Set form title and description
-            document.getElementById('form-title').textContent = formData.title;
-            document.getElementById('form-description').textContent = formData.description;
-    
-            // Calculate and display total points
-            const totalPoints = formData.questions.reduce((sum, question) => sum + question.points, 0);
+        .then(data => {
+            formData = data;
+            document.getElementById('form-title').textContent = data.title;
+            document.getElementById('form-description').textContent = data.description;
+
+            const totalPoints = data.questions.reduce((sum, question) => sum + question.points, 0);
             document.getElementById('total-points').textContent = `Total Maximum Points: ${totalPoints}`;
-    
-            // Render the form
-            renderForm(formData);
-    
-            // Update form submission handler
+
+            renderForm(data);
+
+            // Normal form submission handler
             document.getElementById('form-submit').addEventListener('submit', function(event) {
                 event.preventDefault();
-                
-                const responses = {};
-                formData.questions.forEach(question => {
-                    const answer = document.querySelector(`[name="question_${question.id}"]`).value;
-                    responses[question.id] = answer;
-                });
-    
-                // Submit the form
-                fetch(`/api/forms/${formId}/submit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ responses }),
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Form submission failed');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert(`Form submitted successfully! Your score: ${data.score}%`);
-                    window.location.href = '/dashboard';
-                })
-                .catch(error => {
-                    alert('Error submitting the form: ' + error.message);
-                });
+                const responses = collectResponses();
+                submitForm(responses);
             });
         })
         .catch(error => {
             alert('Error loading form: ' + error.message);
             window.location.href = '/dashboard';
         });
-    
-        // Keep the renderForm function as is
+
         function renderForm(form) {
             const formElement = document.getElementById('form-submit');
-            formElement.innerHTML = ''; // Clear existing form elements
-    
+            formElement.innerHTML = '';
+
             form.questions.forEach(question => {
                 const formGroup = document.createElement('div');
                 formGroup.classList.add('form-group');
-    
+
                 const label = document.createElement('label');
                 label.innerHTML = `${question.text} <span class="points">(${question.points} point${question.points > 1 ? 's' : ''})</span>`;
                 formGroup.appendChild(label);
-    
+
                 let input;
                 if (question.type === 'single_word') {
                     input = document.createElement('input');
@@ -276,11 +310,11 @@
                     optionNo.textContent = 'No';
                     input.appendChild(optionNo);
                 }
-    
+
                 formGroup.appendChild(input);
                 formElement.insertBefore(formGroup, formElement.lastElementChild);
             });
-    
+
             const submitGroup = document.createElement('div');
             submitGroup.classList.add('form-group');
             const submitButton = document.createElement('button');
