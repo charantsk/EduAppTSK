@@ -97,19 +97,23 @@
       </div>
   
       <div class="form-group">
-        <label for="question-type">Question Type</label>
-        <select id="question-type">
-          <option value="SINGLE_WORD">Single Word</option>
-          <option value="MULTI_WORD">Multi Word</option>
-          <option value="TRUE_FALSE">True/False</option>
-          <option value="ATTACHMENT">Attachment</option>
-          <option value="LINK">Link</option>
-          <option value="NUMBER">Number</option>
-          <option value="DATE">Date</option>
-          <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-          <option value="CHECKBOX">Checkbox</option>
-        </select>
+        <label>Question Type</label>
+        <div id="question-type-container" class="question-type-options">
+          <button class="question-type-btn" data-type="SINGLE_WORD"><i class="fas fa-font"></i> Single Word</button>
+          <button class="question-type-btn" data-type="MULTI_WORD"><i class="fas fa-align-left"></i> Multi Word</button>
+          <button class="question-type-btn" data-type="TRUE_FALSE"><i class="fas fa-check-circle"></i> True/False</button>
+          <button class="question-type-btn" data-type="ATTACHMENT"><i class="fas fa-paperclip"></i> Attachment</button>
+          <button class="question-type-btn" data-type="LINK"><i class="fas fa-link"></i> Link</button>
+          <button class="question-type-btn" data-type="NUMBER"><i class="fas fa-hashtag"></i> Number</button>
+          <button class="question-type-btn" data-type="DATE"><i class="fas fa-calendar-alt"></i> Date</button>
+          <button class="question-type-btn" data-type="MULTIPLE_CHOICE"><i class="fas fa-list"></i> Multiple Choice</button>
+          <button class="question-type-btn" data-type="CHECKBOX"><i class="fas fa-check-square"></i> Checkbox</button>
+        </div>
       </div>
+      
+      <!-- Hidden Input to Store Selected Type -->
+      <input type="hidden" id="question-type" value="SINGLE_WORD">
+      
   
       <div class="form-group">
         <label for="correct-answer">Correct Answer</label>
@@ -387,10 +391,16 @@ function renderQuestions() {
         const questionElement = document.createElement('div');
         questionElement.classList.add('question-item');
         questionElement.innerHTML = `
-            <strong>${question.text}</strong> 
-            <p>Type: ${question.type}</p>
-            <p>Correct Answer: ${question.correct_answer}</p>
-            <p>Points: ${question.points}</p>
+            <div class="question-content">
+                <strong>${question.text}</strong> 
+                <p>Type: ${question.type}</p>
+                <p>Correct Answer: ${question.correct_answer}</p>
+                <p>Points: ${question.points}</p>
+            </div>
+            <div class="question-actions">
+                <button class="button" onclick="openQuestionModal(${index})">Edit</button>
+                <button class="button button-danger" onclick="deleteQuestion(${index})">Delete</button>
+            </div>
         `;
         questionsContainer.appendChild(questionElement);
     });
@@ -480,6 +490,26 @@ function enablePushNotification() {
 }
 
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const questionTypeButtons = document.querySelectorAll(".question-type-btn");
+  
+    questionTypeButtons.forEach(button => {
+      button.addEventListener("click", function() {
+        // Remove active class from all buttons
+        questionTypeButtons.forEach(btn => btn.classList.remove("active"));
+        
+        // Add active class to the selected button
+        this.classList.add("active");
+        
+        // Set selected type to hidden input
+        document.getElementById("question-type").value = this.dataset.type;
+      });
+    });
+  });
+  
+  </script>
 
 </body>
 </html>

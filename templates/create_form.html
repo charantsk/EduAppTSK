@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/create_form.css') }}"> <!-- Link to local student_css -->
+  <script src="{{ url_for('static', filename='js/question_type.js') }}"></script>
 
-  
+
 </head>
 <body>
 
   {% include 'staff_navbar.html' %}
-
 
   <div class="container">
     <div class="card">
@@ -97,20 +97,23 @@
       </div>
 
       <div class="form-group">
-        <label for="question-type">Question Type</label>
-        <select id="question-type">
-          <option value="SINGLE_WORD">Single Word</option>
-          <option value="MULTI_WORD">Multi Word</option>
-          <option value="TRUE_FALSE">True/False</option>
-          <option value="ATTACHMENT">Attachment</option>
-          <option value="LINK">Link</option>
-          <option value="NUMBER">Number</option>
-          <option value="DATE">Date</option>
-          <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-          <option value="CHECKBOX">Checkbox</option>
-      </select>
-      
+        <label>Question Type</label>
+        <div id="question-type-container" class="question-type-options">
+          <button class="question-type-btn" data-type="SINGLE_WORD"><i class="fas fa-font"></i> Single Word</button>
+          <button class="question-type-btn" data-type="MULTI_WORD"><i class="fas fa-align-left"></i> Multi Word</button>
+          <button class="question-type-btn" data-type="TRUE_FALSE"><i class="fas fa-check-circle"></i> True/False</button>
+          <button class="question-type-btn" data-type="ATTACHMENT"><i class="fas fa-paperclip"></i> Attachment</button>
+          <button class="question-type-btn" data-type="LINK"><i class="fas fa-link"></i> Link</button>
+          <button class="question-type-btn" data-type="NUMBER"><i class="fas fa-hashtag"></i> Number</button>
+          <button class="question-type-btn" data-type="DATE"><i class="fas fa-calendar-alt"></i> Date</button>
+          <button class="question-type-btn" data-type="MULTIPLE_CHOICE"><i class="fas fa-list"></i> Multiple Choice</button>
+          <button class="question-type-btn" data-type="CHECKBOX"><i class="fas fa-check-square"></i> Checkbox</button>
+        </div>
       </div>
+      
+      <!-- Hidden Input to Store Selected Type -->
+      <input type="hidden" id="question-type" value="SINGLE_WORD">
+      
 
       <div class="form-group">
         <label for="correct-answer">Correct Answer</label>
@@ -377,6 +380,7 @@ document.getElementById("form-type").dispatchEvent(new Event("change"));
 document.getElementById('form-type').dispatchEvent(new Event('change'));
 
   </script>
+
 
 </body>
 </html>
