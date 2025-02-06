@@ -32,14 +32,9 @@ Credentials :
 - Password: staff  
 
 **Student:**
-
-- Student 1 
-  - Username: student  
-  - Password: student
-
-- Student 2
-  - Username : student2
-  - Password : student2
+ 
+- Username: student  
+- Password: student
 
 ![image](https://github.com/user-attachments/assets/e15a85eb-4cef-45ba-a503-ea895541d0e7)
 ![image](https://github.com/user-attachments/assets/977b8470-a25c-422a-a419-8dfec1227846)
