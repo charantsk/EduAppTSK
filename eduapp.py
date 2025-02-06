@@ -27,30 +27,46 @@ class QuestionType(enum.Enum):
     SINGLE_WORD = "single_word"
     MULTI_WORD = "multi_word"
     TRUE_FALSE = "true_false"
+    ATTACHMENT = "attachment"
+    LINK = "link"
+    NUMBER = "number"
+    DATE = "date"
+    MULTIPLE_CHOICE = "multiple_choice"
+    CHECKBOX = "checkbox"
+
+# Add new FormType enum
+class FormType(enum.Enum):
+    NOTIFICATION = "notification"
+    QUESTION_BANK = "question_bank"
+    SURVEY = "survey"
 
 
 # Database Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)  # Add this line
     password_hash = db.Column(db.String(120), nullable=False)
     role = db.Column(db.Enum(UserRole), nullable=False)
-    
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+# Update Form model to include form_type
 class Form(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    form_type = db.Column(db.Enum(FormType), nullable=False, default=FormType.NOTIFICATION)
+    time_limit = db.Column(db.Integer)  # Add this line (time limit in minutes)
     questions = db.relationship('Question', backref='form', lazy=True, cascade='all, delete-orphan')
     submissions = db.relationship('Submission', backref='form', lazy=True, cascade='all, delete-orphan')
-
+    
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     form_id = db.Column(db.Integer, db.ForeignKey('form.id'), nullable=False)
@@ -115,11 +131,21 @@ def create_user():
     if User.query.filter_by(username=data['username']).first():
         return jsonify({"error": "Username already exists"}), 400
     
-    user = User(username=data['username'], role=UserRole[data['role'].upper()])
+    # Check if email exists and is unique (if provided)
+    if 'email' in data:
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({"error": "Email already exists"}), 400
+    
+    user = User(
+        username=data['username'],
+        role=UserRole[data['role'].upper()],
+        email=data.get('email')  # This will be None if email is not provided
+    )
     user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": "User created successfully"}), 201
+
 
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
 @requires_role(UserRole.STAFF)
@@ -133,9 +159,16 @@ def edit_user(user_id):
         user.set_password(data['password'])
     if 'role' in data:
         user.role = UserRole[data['role'].upper()]
+    if 'email' in data:
+        # Check if the new email is unique (if it's different from current)
+        if data['email'] != user.email:
+            if User.query.filter_by(email=data['email']).first():
+                return jsonify({"error": "Email already exists"}), 400
+        user.email = data['email']
     
     db.session.commit()
     return jsonify({"message": "User updated successfully"})
+
 
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 @requires_role(UserRole.STAFF)
@@ -167,7 +200,7 @@ def logout():
 def create_form():
     try:
         data = request.get_json()
-        print("Received data:", data)  # Add this for debugging
+        print("Received data:", data)
         
         if not data:
             return jsonify({"error": "No data provided"}), 400
@@ -175,14 +208,18 @@ def create_form():
         if not data.get('title'):
             return jsonify({"error": "Form title is required"}), 400
 
+        form_type = FormType[data.get('form_type', 'NOTIFICATION').upper()]
+
         form = Form(
             title=data['title'],
             description=data.get('description', ''),
-            created_by=current_user.id
+            created_by=current_user.id,
+            form_type=form_type,
+            time_limit=data.get('time_limit') if form_type == FormType.QUESTION_BANK else None  # Add this line
         )
         
         for q_data in data['questions']:
-            print("Processing question:", q_data)  # Add this for debugging
+            print("Processing question:", q_data)
             try:
                 question = Question(
                     text=q_data['text'],
@@ -192,10 +229,10 @@ def create_form():
                 )
                 form.questions.append(question)
             except KeyError as e:
-                print(f"KeyError: {e}")  # Add this for debugging
+                print(f"KeyError: {e}")
                 return jsonify({"error": f"Missing required field in question: {str(e)}"}), 400
             except ValueError as e:
-                print(f"ValueError: {e}")  # Add this for debugging
+                print(f"ValueError: {e}")
                 return jsonify({"error": f"Invalid value in question: {str(e)}"}), 400
         
         db.session.add(form)
@@ -204,7 +241,7 @@ def create_form():
     
     except Exception as e:
         db.session.rollback()
-        print(f"Error creating form: {str(e)}")  # Add this for debugging
+        print(f"Error creating form: {str(e)}")
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/api/forms/<int:form_id>', methods=['PUT'])
@@ -239,34 +276,55 @@ def delete_form(form_id):
     db.session.commit()
     return jsonify({"message": "Form deleted successfully"})
 
+
+
+
 @app.route('/api/forms', methods=['GET'])
 @login_required
 def get_all_forms():
-    forms = Form.query.all()
-    forms_data = []
-    
+    if current_user.role == UserRole.STUDENT:
+        forms = Form.query.filter(Form.form_type.in_([FormType.QUESTION_BANK, FormType.NOTIFICATION,FormType.SURVEY])).all()
+    else:
+        forms = Form.query.all()
+
+    # Debugging: Log the forms data to ensure the staff are getting data
+    print("Forms for Staff:", forms)
+
+    forms_data = {
+        'forms': [],
+        'notifications': []
+    }
+
     for form in forms:
         form_data = {
             'id': form.id,
             'title': form.title,
             'description': form.description,
             'created_by': form.created_by,
-            'created_at': form.created_at.isoformat()
+            'created_at': form.created_at.isoformat(),
+            'form_type': form.form_type.value
         }
-        
-        # Add submission status for students
-        if current_user.role == UserRole.STUDENT:
-            form_data['already_submitted'] = has_submitted_form(current_user.id, form.id)
-            
-        forms_data.append(form_data)
-    
+
+        if form.form_type == FormType.NOTIFICATION:
+            forms_data['notifications'].append(form_data)
+        else:
+            if current_user.role == UserRole.STUDENT:
+                form_data['already_submitted'] = has_submitted_form(current_user.id, form.id)
+            forms_data['forms'].append(form_data)
+
     return jsonify(forms_data)
+
 
 
 @app.route('/api/forms/<int:form_id>', methods=['GET'])
 @login_required
 def get_form_details(form_id):
     form = Form.query.get_or_404(form_id)
+    
+    # Students can access QUESTION_BANK and SURVEY so they can enter stuff
+    if current_user.role == UserRole.STUDENT and form.form_type not in [FormType.QUESTION_BANK, FormType.SURVEY]:
+        return jsonify({"error": "Unauthorized"}), 403
+    
     questions_data = [{
         'id': q.id,
         'text': q.text,
@@ -285,8 +343,11 @@ def get_form_details(form_id):
         'description': form.description,
         'created_by': form.created_by,
         'created_at': form.created_at.isoformat(),
+        'form_type': form.form_type.value,
+        'time_limit': form.time_limit,  # Include time_limit in response
         'questions': questions_data
     })
+
 
 # Form submission routes
 @app.route('/api/forms/<int:form_id>/submit', methods=['POST'])
@@ -322,13 +383,25 @@ def submit_form(form_id):
 @app.route('/api/forms/<int:form_id>/submissions', methods=['GET'])
 @requires_role(UserRole.STAFF)
 def get_form_submissions(form_id):
+    form = Form.query.get_or_404(form_id)
     submissions = Submission.query.filter_by(form_id=form_id).all()
+    
+    # Get all questions for this form
+    questions = {q.id: {
+        'text': q.text,
+        'correct_answer': q.correct_answer,
+        'type': q.type.value,
+        'points': q.points
+    } for q in form.questions}
+    
     return jsonify([{
         'id': sub.id,
         'user_id': sub.user_id,
         'responses': json.loads(sub.responses),
         'submitted_at': sub.submitted_at.isoformat(),
-        'score': sub.score
+        'score': sub.score if form.form_type == FormType.QUESTION_BANK else None,
+        'form_type': form.form_type.value,
+        'questions': questions  # Include questions data
     } for sub in submissions])
 
 @app.route('/api/forms/submissions/<int:submission_id>', methods=['DELETE'])

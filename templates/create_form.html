@@ -213,19 +213,28 @@
         }
 
 
+      .save-form-button{
+        background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-flex
+;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    width: fit-content;
+      }
+
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <div class="navbar">
-    <div class="logo">
-        <a href="#">Manage Forms</a>
-    </div>
-    <div class="greeting">
-        <span>Welcome, Staff!</span>
-    </div>
-</div>
+  {% include 'staff_navbar.html' %}
+
 
   <div class="container">
     <div class="card">
@@ -235,12 +244,48 @@
         <label for="form-title">Form Title</label>
         <input type="text" id="form-title" placeholder="Enter a title for your form">
       </div>
-
+    
+      <div class="form-group">
+        <label for="form-type">Form Type</label>
+        <select id="form-type">
+          <option value="NOTIFICATION">Notification</option>
+          <option value="QUESTION_BANK">Question Bank</option>
+          <option value="SURVEY">Survey</option>
+        </select>
+      </div>
+    
       <div class="form-group">
         <label for="form-description">Form Description</label>
         <textarea id="form-description" placeholder="Describe your form"></textarea>
       </div>
+    
+      <!-- Move the timer section here -->
+      <div class="form-group" id="timer-section" style="display: none;">
+        <label for="form-timer">Time Limit (minutes)</label>
+        <input 
+          type="number" 
+          id="form-timer" 
+          min="1" 
+          max="180" 
+          value="30" 
+          placeholder="Enter time limit in minutes"
+        >
+        <small style="color: var(--text-secondary);">Set a time limit for this question bank (1-180 minutes)</small>
+      </div>
     </div>
+
+<div class="form-group" id="timer-section" style="display: none;">
+  <label for="form-timer">Time Limit (minutes)</label>
+  <input 
+    type="number" 
+    id="form-timer" 
+    min="1" 
+    max="180" 
+    value="30" 
+    placeholder="Enter time limit in minutes"
+  >
+  <small style="color: var(--text-secondary);">Set a time limit for this question bank (1-180 minutes)</small>
+</div>
 
     <div class="card">
       <div class="form-group">
@@ -253,7 +298,7 @@
     </div>
 
     <div class="form-group">
-      <button class="button button-primary" onclick="saveForm()" style="width: 100%;">Save Form</button>
+      <button class="button button-primary save-form-button" onclick="saveForm()" >Save Form</button>
     </div>
   </div>
 
@@ -275,7 +320,14 @@
           <option value="SINGLE_WORD">Single Word</option>
           <option value="MULTI_WORD">Multi Word</option>
           <option value="TRUE_FALSE">True/False</option>
+          <option value="ATTACHMENT">Attachment</option>
+          <option value="LINK">Link</option>
+          <option value="NUMBER">Number</option>
+          <option value="DATE">Date</option>
+          <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+          <option value="CHECKBOX">Checkbox</option>
       </select>
+      
       </div>
 
       <div class="form-group">
@@ -384,9 +436,11 @@
 
     // Save the form
     function saveForm() {
+    const formType = document.getElementById('form-type').value;
     const formData = {
         title: document.getElementById('form-title').value,
         description: document.getElementById('form-description').value,
+        form_type: formType,
         questions: questions.map(q => ({
             text: q.text,
             type: q.type,
@@ -395,17 +449,30 @@
         }))
     };
 
+    // Add timer only for QUESTION_BANK type
+    if (formType === 'QUESTION_BANK') {
+        const timerValue = document.getElementById('form-timer').value;
+        
+        // Validate timer
+        if (!timerValue || timerValue < 1 || timerValue > 180) {
+            alert('Please set a valid time limit between 1 and 180 minutes');
+            return;
+        }
+        
+        formData.time_limit = parseInt(timerValue);
+    }
+
     if (!formData.title) {
         alert('Please enter a form title');
         return;
     }
 
-    if (formData.questions.length === 0) {
+    if (formType === 'QUESTION_BANK' && formData.questions.length === 0) {
         alert('Please add at least one question');
         return;
     }
 
-    console.log('Sending form data:', formData); // Add this for debugging
+    console.log('Sending form data:', formData);
 
     fetch('/api/forms/create', {
         method: 'POST',
@@ -467,6 +534,66 @@
       }
       draggedItem.classList.remove('dragging');
     }
+
+    // Add event listener for form type changes
+    document.getElementById('form-type').addEventListener('change', function() {
+    const questionSection = document.querySelector('.card:nth-child(2)');
+    const timerSection = document.getElementById('timer-section');
+    
+    if (this.value === 'QUESTION_BANK') {
+        questionSection.style.display = 'block';
+        timerSection.style.display = 'block';
+    } else {
+        questionSection.style.display = 'none';
+        timerSection.style.display = 'none';
+    }
+});
+
+// Update the window load event listener
+window.addEventListener('load', function() {
+    const formType = document.getElementById('form-type').value;
+    const questionSection = document.querySelector('.card:nth-child(2)');
+    const timerSection = document.getElementById('timer-section');
+    
+    if (formType === 'QUESTION_BANK') {
+        questionSection.style.display = 'block';
+        timerSection.style.display = 'block';
+    } else {
+        questionSection.style.display = 'none';
+        timerSection.style.display = 'none';
+    }
+});
+
+document.getElementById("form-type").addEventListener("change", function () {
+    let timerSection = document.getElementById("timer-section");
+    if (this.value === "QUESTION_BANK") {
+        timerSection.style.display = "block"; // Show the timer section
+    } else {
+        timerSection.style.display = "none"; // Hide it for other types
+    }
+});
+
+// Trigger change event on page load to set the correct initial state
+document.getElementById("form-type").dispatchEvent(new Event("change"));
+
+
+
+
+  </script>
+
+  <script>
+    document.getElementById('form-type').addEventListener('change', function () {
+    let questionsCard = document.querySelector('.questions-list').closest('.card');
+    if (this.value === 'NOTIFICATION') {
+        questionsCard.style.display = 'none';
+    } else {
+        questionsCard.style.display = 'block';
+    }
+});
+
+// Trigger the change event on page load to apply the logic initially
+document.getElementById('form-type').dispatchEvent(new Event('change'));
+
   </script>
 
 </body>

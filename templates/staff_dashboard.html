@@ -159,19 +159,13 @@
             background-color: var(--primary-hover);
         }
     </style>
+    
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <div class="navbar">
-        <div class="logo">
-            <a href="#">Manage Forms</a>
-        </div>
-        <div class="greeting">
-            <span>Welcome, Staff!</span>
-        </div>
-    </div>
+    {% include 'staff_navbar.html' %}
+
 
     <div class="container">
         <div class="card">
@@ -213,43 +207,56 @@
     <script>
         // Function to fetch forms from the API
         async function fetchForms() {
-            try {
-                const response = await fetch('/api/forms');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch forms');
-                }
-                const forms = await response.json();
-                renderForms(forms);
-            } catch (error) {
-                console.error('Error fetching forms:', error);
-                // You might want to show an error message to the user
-            }
+    try {
+        const response = await fetch('/api/forms');
+        if (!response.ok) {
+            throw new Error('Failed to fetch forms');
         }
-
+        const data = await response.json();
+        renderForms(data);
+    } catch (error) {
+        console.error('Error fetching forms:', error);
+        // You might want to show an error message to the user
+    }
+}
         // Function to render the forms in the table
-        function renderForms(forms) {
-            const tableBody = document.querySelector("#forms-table tbody");
-            tableBody.innerHTML = ''; // Clear existing rows
+        function renderForms(data) {
+    const tableBody = document.querySelector("#forms-table tbody");
+    tableBody.innerHTML = ''; // Clear existing rows
 
-            forms.forEach(form => {
-                const row = document.createElement('tr');
-                const createdAt = new Date(form.created_at).toLocaleDateString();
-                row.innerHTML = `
-                    <td>${form.title}</td>
-                    <td>${form.description || ''}</td>
-                    <td>
-                        <a href="/staff/view_form?form_id=${form.id}" class="form-link">View</a>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
+    // Combine forms and notifications arrays
+    const allForms = [...(data.forms || []), ...(data.notifications || [])];
+
+    if (allForms.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `
+            <td colspan="3" class="text-center py-4">
+                No forms found. Create a new form to get started.
+            </td>
+        `;
+        tableBody.appendChild(emptyRow);
+        return;
+    }
+
+    allForms.forEach(form => {
+        const row = document.createElement('tr');
+        const createdAt = new Date(form.created_at).toLocaleDateString();
+        row.innerHTML = `
+            <td>${form.title}</td>
+            <td>${form.description || ''}</td>
+            <td>
+                <a href="/staff/view_form?form_id=${form.id}" class="form-link">View</a>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
 
         // Initial fetch when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchForms();
-        });
-
+        // Initial fetch when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchForms();
+});
         // Remove the modal-related code since we're now navigating to a new page
         // Remove openModal and closeModal functions
     </script>

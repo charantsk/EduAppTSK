@@ -1,151 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Submit Form</title>
-    <style>
-        :root {
-            --primary-color: #5046e5;
-            --primary-hover: #4038b6;
-            --danger-color: #ef4444;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --background: #f9fafb;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 100%;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 1.875rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .points {
-            color: var(--primary-color);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: border-color 0.15s ease;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(80, 70, 229, 0.1);
-        }
-
-        textarea {
-            min-height: 100px;
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .total-points {
-            text-align: right;
-            font-weight: 500;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .navbar {
-            background-color: var(--primary-color);
-            padding: 1rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student.css') }}"> <!-- Link to local student_css -->
 </head>
+
 <body>
-    <div class="navbar">
-        <div class="logo">
-            <a href="#">Student Dashboard</a>
-        </div>
-        <div class="greeting">
-            <span>Welcome, Student!</span>
-        </div>
-    </div>
+    {% include 'student_navbar.html' %}
 
     <div class="container">
         <div class="card">
@@ -163,6 +29,8 @@
     <script>
         let formData = null;
         let isSubmitting = false;
+        let isSurveyForm = false;
+        let resizeTimeout = null;
 
         // Function to collect form responses
         function collectResponses() {
@@ -198,7 +66,14 @@
                 }
 
                 const data = await response.json();
-                alert(`Form submitted successfully! Your score: ${data.score}%`);
+                
+                // Only show score for non-survey forms
+                if (!isSurveyForm) {
+                    alert(`Form submitted successfully! Your score: ${data.score}%`);
+                } else {
+                    alert('Survey submitted successfully!');
+                }
+                
                 window.location.href = '/dashboard';
             } catch (error) {
                 alert('Error submitting the form: ' + error.message);
@@ -207,28 +82,49 @@
             }
         }
 
-        // Auto-submit handler
+        // Auto-submit handler - only for non-survey forms
         function handleAutoSubmit() {
-            const responses = collectResponses();
-            if (Object.keys(responses).length > 0) {
-                submitForm(responses);
+            if (!isSurveyForm) {
+                const responses = collectResponses();
+                if (Object.keys(responses).length > 0) {
+                    submitForm(responses);
+                }
             }
         }
 
-        // Add event listeners for page leave
+        // Debounced resize handler
+        function handleResize() {
+            if (!isSurveyForm) {
+                // Clear the timeout if it exists
+                if (resizeTimeout) {
+                    clearTimeout(resizeTimeout);
+                }
+                
+                // Set a new timeout
+                resizeTimeout = setTimeout(() => {
+                    handleAutoSubmit();
+                }, 1000); // Will trigger after 1 second of no resize events
+            }
+        }
+
+        // Add event listeners for page leave - only for non-survey forms
         window.addEventListener('beforeunload', function(e) {
-            handleAutoSubmit();
-            // Modern browsers don't show custom messages anymore
-            e.preventDefault();
-            e.returnValue = '';
+            if (!isSurveyForm) {
+                handleAutoSubmit();
+                e.preventDefault();
+                e.returnValue = '';
+            }
         });
 
-        // Also handle visibility change for tab switching
+        // Handle visibility change for tab switching - only for non-survey forms
         document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'hidden') {
+            if (!isSurveyForm && document.visibilityState === 'hidden') {
                 handleAutoSubmit();
             }
         });
+
+        // Add resize event listener
+        window.addEventListener('resize', handleResize);
 
         // Get the form ID from the URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -255,11 +151,23 @@
         })
         .then(data => {
             formData = data;
+            isSurveyForm = data.form_type === 'survey'; // Set the survey flag
+            
+            // Apply survey-specific styling if it's a survey
+            if (isSurveyForm) {
+                document.querySelector('.container').style.backgroundColor = '#fffff0'; // Light yellow background
+            }
+            
             document.getElementById('form-title').textContent = data.title;
             document.getElementById('form-description').textContent = data.description;
 
-            const totalPoints = data.questions.reduce((sum, question) => sum + question.points, 0);
-            document.getElementById('total-points').textContent = `Total Maximum Points: ${totalPoints}`;
+            // Only show total points for non-survey forms
+            if (!isSurveyForm) {
+                const totalPoints = data.questions.reduce((sum, question) => sum + question.points, 0);
+                document.getElementById('total-points').textContent = `Total Maximum Points: ${totalPoints}`;
+            } else {
+                document.getElementById('total-points').style.display = 'none';
+            }
 
             renderForm(data);
 
@@ -276,54 +184,111 @@
         });
 
         function renderForm(form) {
-            const formElement = document.getElementById('form-submit');
-            formElement.innerHTML = '';
+    const formElement = document.getElementById('form-submit');
+    formElement.innerHTML = ''; // Clear any existing form fields
 
-            form.questions.forEach(question => {
-                const formGroup = document.createElement('div');
-                formGroup.classList.add('form-group');
+    form.questions.forEach(question => {
+        const formGroup = document.createElement('div');
+        formGroup.className = 'form-group';
 
-                const label = document.createElement('label');
-                label.innerHTML = `${question.text} <span class="points">(${question.points} point${question.points > 1 ? 's' : ''})</span>`;
-                formGroup.appendChild(label);
-
-                let input;
-                if (question.type === 'single_word') {
-                    input = document.createElement('input');
-                    input.type = 'text';
-                    input.name = `question_${question.id}`;
-                    input.required = true;
-                } else if (question.type === 'multi_word') {
-                    input = document.createElement('textarea');
-                    input.name = `question_${question.id}`;
-                    input.required = true;
-                } else if (question.type === 'true_false') {
-                    input = document.createElement('select');
-                    input.name = `question_${question.id}`;
-                    input.required = true;
-                    const optionYes = document.createElement('option');
-                    optionYes.value = 'true';
-                    optionYes.textContent = 'Yes';
-                    input.appendChild(optionYes);
-                    const optionNo = document.createElement('option');
-                    optionNo.value = 'false';
-                    optionNo.textContent = 'No';
-                    input.appendChild(optionNo);
-                }
-
-                formGroup.appendChild(input);
-                formElement.insertBefore(formGroup, formElement.lastElementChild);
-            });
-
-            const submitGroup = document.createElement('div');
-            submitGroup.classList.add('form-group');
-            const submitButton = document.createElement('button');
-            submitButton.type = 'submit';
-            submitButton.classList.add('button');
-            submitButton.textContent = 'Submit';
-            submitGroup.appendChild(submitButton);
-            formElement.appendChild(submitGroup);
+        const label = document.createElement('label');
+        label.htmlFor = `question_${question.id}`;
+        // Only show points for non-survey forms
+        if (isSurveyForm) {
+            label.textContent = question.text;
+        } else {
+            label.innerHTML = `${question.text} <span class="points">(${question.points} point${question.points > 1 ? 's' : ''})</span>`;
         }
+        formGroup.appendChild(label);
+
+        let input;
+        switch(question.type) {
+            case 'single_word':
+                input = document.createElement('input');
+                input.type = 'text';
+                break;
+            case 'multi_word':
+                input = document.createElement('textarea');
+                break;
+            case 'true_false':
+                input = document.createElement('select');
+                const optionYes = document.createElement('option');
+                optionYes.value = 'true';
+                optionYes.textContent = 'Yes';
+                const optionNo = document.createElement('option');
+                optionNo.value = 'false';
+                optionNo.textContent = 'No';
+                input.appendChild(optionYes);
+                input.appendChild(optionNo);
+                break;
+            case 'attachment':
+                input = document.createElement('input');
+                input.type = 'file';
+                // Add the file size validation
+                input.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file && file.size > 50 * 1024 * 1024) { // 50MB
+                        alert('File size should be less than 50MB.');
+                        event.target.value = ''; // Clear the selected file
+                    }
+                });
+                break;
+            case 'link':
+                input = document.createElement('input');
+                input.type = 'url';
+                break;
+            case 'number':
+                input = document.createElement('input');
+                input.type = 'number';
+                break;
+            case 'date':
+                input = document.createElement('input');
+                input.type = 'date';
+                break;
+            case 'multiple_choice':
+                input = document.createElement('select');
+                question.options.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    input.appendChild(option);
+                });
+                break;
+            case 'checkbox':
+                input = document.createElement('input');
+                input.type = 'checkbox';
+                break;
+            default:
+                input = document.createElement('input');
+                input.type = 'text';
+        }
+
+        // Set common attributes
+        input.id = `question_${question.id}`;
+        input.name = `question_${question.id}`;
+        input.required = true;
+        input.className = 'form-control';
+
+        formGroup.appendChild(input);
+        formElement.appendChild(formGroup);
+    });
+
+    // Create submit button container
+    const submitGroup = document.createElement('div');
+    submitGroup.className = 'form-group';
+    
+    // Create submit button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.className = 'button';
+    submitButton.textContent = 'Submit';
+    
+    // Append button to container and container to form
+    submitGroup.appendChild(submitButton);
+    formElement.appendChild(submitGroup);
+}
+
     </script>
 </body>
+
 </html>

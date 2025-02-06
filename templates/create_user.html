@@ -5,112 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create User</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --text-color: #2c3e50;
+            --error-color: #e74c3c;
+            --background-color: #f5f6fa;
+            --border-color: #dcdde1;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
+            padding: 0;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
         .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
-            color: #34495e;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            font-size: 1.8rem;
         }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
         label {
             display: block;
-            margin: 10px 0 5px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
         }
-        input[type="text"],
-        input[type="password"],
-        select {
+
+        input, select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
         button {
             width: 100%;
-            padding: 10px;
-            background-color: #3498db;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #2980b9;
+            background-color: var(--primary-dark);
         }
+
         .error {
-            color: red;
+            color: var(--error-color);
             text-align: center;
-            margin-top: 10px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            input, select, button {
+                padding: 0.7rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Create User</h1>
+        <form id="createUserForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-<div class="container">
-    <h1>Create User</h1>
-    <form id="createUserForm">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-        <label for="role">Role</label>
-        <select id="role" name="role" required>
-            <option value="staff">Staff</option>
-            <option value="student">Student</option>
-        </select>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="">Select a role</option>
+                    <option value="staff">Staff</option>
+                    <option value="student">Student</option>
+                </select>
+            </div>
 
-        <button type="submit">Create User</button>
-    </form>
-    <div class="error" id="errorMessage"></div>
-</div>
-
-<script>
-    document.getElementById('createUserForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
-
-        const data = {
-            username: username,
-            password: password,
-            role: role
-        };
-
-        fetch('/api/users/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                document.getElementById('errorMessage').textContent = data.error;
-            } else {
-                window.location.href = '/users'; // Redirect to a user listing page or dashboard
+            <button type="submit">Create User</button>
+        </form>
+        <div class="error" id="errorMessage"></div>
+    </div>
+    <script>
+        // Your existing JavaScript remains the same
+        document.getElementById('createUserForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+    
+            const data = {
+                username: username,
+                password: password,
+                role: role
+            };
+    
+            if (email.trim()) {
+                data.email = email;
             }
-        })
-        .catch(error => {
-            document.getElementById('errorMessage').textContent = 'Something went wrong. Please try again.';
+    
+            fetch('/api/users/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('errorMessage').textContent = data.error;
+                } else {
+                    window.location.href = '/users';
+                }
+            })
+            .catch(error => {
+                document.getElementById('errorMessage').textContent = 'Something went wrong. Please try again.';
+            });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
