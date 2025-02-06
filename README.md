@@ -28,13 +28,13 @@ Credentials :
 
 **Staff:**
 
-- Username: admin  
-- Password: admin  
+- Username: staff  
+- Password: staff  
 
 **Student:**
 
-- Username: admin2  
-- Password: admin2
+- Username: student  
+- Password: student
 
 ![image](https://github.com/user-attachments/assets/2bdfd42c-91ac-41e4-a4da-db25d7db67f4)
 ![image](https://github.com/user-attachments/assets/72c20494-7f4a-4b92-b479-f932dea2132e)
