@@ -70,6 +70,7 @@ class Question(db.Model):
     type = db.Column(db.Enum(QuestionType), nullable=False)
     correct_answer = db.Column(db.String(200), nullable=False)  # Added correct answer field
     points = db.Column(db.Integer, default=1)  # Points for this question
+    choices = db.Column(db.JSON)
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -223,7 +224,8 @@ def create_form():
                     text=q_data['text'],
                     type=QuestionType[q_data['type']],
                     correct_answer=q_data['correct_answer'],
-                    points=int(q_data.get('points', 1))
+                    points=int(q_data.get('points', 1)),
+                    choices=q_data.get('choices', [])  
                 )
                 form.questions.append(question)
             except KeyError as e:
@@ -322,11 +324,12 @@ def get_form_details(form_id):
         return jsonify({"error": "Unauthorized"}), 403
     
     questions_data = [{
-        'id': q.id,
-        'text': q.text,
-        'type': q.type.value,
-        'points': q.points
-    } for q in form.questions]
+    'id': q.id,
+    'text': q.text,
+    'type': q.type.value,
+    'points': q.points,
+    'choices': q.choices if q.type == QuestionType.MULTIPLE_CHOICE else None
+} for q in form.questions]
     
     # Add correct answers only for staff members
     if current_user.role == UserRole.STAFF:
