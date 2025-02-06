@@ -1,3 +1,29 @@
+# Edu App
+
+## Overview
+Edu App is a web application designed for managing exam-related forms with distinct roles for students and staff. It provides an efficient system for creating, organizing, and administering exams through a structured interface.
+
+## Features
+
+### Student Role
+- Add and delete exam forms.
+- Access forms to write exams.
+
+### Staff Role
+- Perform CRUD (Create, Read, Update, Delete) operations on exam forms.
+- Manage student submissions.
+
+### User Authentication & Authorization
+- Role-based access control for students and staff.
+
+## Technology Stack
+- **Backend:** Flask (Python)
+- **Database:** PostgreSQL / SQLite
+- **Frontend:** HTML, CSS, JavaScript
+- **Authentication:** Flask-Login / JWT-based authentication
+- **Deployment:** Docker, GitHub Pages / Netlify / Vercel
+
+
 Credentials :
 
 **Staff:**
