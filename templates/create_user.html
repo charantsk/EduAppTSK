@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create User</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+
     <style>
         :root {
             --primary-color: #3498db;
             --primary-dark: #2980b9;
             --text-color: #2c3e50;
             --error-color: #e74c3c;
-            --background-color: #f5f6fa;
+            --background-color: #5046e5;
             --border-color: #dcdde1;
         }
 
@@ -26,7 +28,7 @@
             background-color: var(--background-color);
             color: var(--text-color);
             min-height: 100vh;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -113,6 +115,9 @@
     </style>
 </head>
 <body>
+
+    {% include 'staff_navbar.html' %}
+
     <div class="container">
         <h1>Create User</h1>
         <form id="createUserForm">
@@ -176,7 +181,7 @@
                 if (data.error) {
                     document.getElementById('errorMessage').textContent = data.error;
                 } else {
-                    window.location.href = '/users';
+                    window.location.href = '/dashboard';
                 }
             })
             .catch(error => {

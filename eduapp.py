@@ -3,10 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import enum
+import os
 from datetime import datetime
 import json
-from flask import render_template,redirect,url_for
+from flask import render_template, redirect, url_for
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this in production
@@ -18,28 +23,19 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Helper function to load enums from .env
+def get_enum_from_env(name, default_values):
+    values = os.getenv(name, ",".join(default_values)).split(",")
+    return enum.Enum(name, {val.upper(): val for val in values})
+
 # Enums for roles and question types
-class UserRole(enum.Enum):
-    STAFF = "staff"
-    STUDENT = "student"
-    OTHER = "other"
+UserRole = get_enum_from_env("USER_ROLES", ["staff", "student", "other"])
+QuestionType = get_enum_from_env("QUESTION_TYPES", [
+    "single_word", "multi_word", "true_false", "attachment",
+    "link", "number", "date", "multiple_choice", "checkbox"
+])
+FormType = get_enum_from_env("FORM_TYPES", ["notification", "question_bank", "survey"])
 
-class QuestionType(enum.Enum):
-    SINGLE_WORD = "single_word"
-    MULTI_WORD = "multi_word"
-    TRUE_FALSE = "true_false"
-    ATTACHMENT = "attachment"
-    LINK = "link"
-    NUMBER = "number"
-    DATE = "date"
-    MULTIPLE_CHOICE = "multiple_choice"
-    CHECKBOX = "checkbox"
-
-# Add new FormType enum
-class FormType(enum.Enum):
-    NOTIFICATION = "notification"
-    QUESTION_BANK = "question_bank"
-    SURVEY = "survey"
 
 # Database Models
 class User(UserMixin, db.Model):
@@ -463,8 +459,6 @@ def staff_profile():
     staff = current_user  # Or you can fetch a specific student using their ID
     
     return render_template('staff_profile.html', staff=staff)
-
-
 
 
 @app.route('/register_user', methods=['GET', 'POST'])

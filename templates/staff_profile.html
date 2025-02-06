@@ -5,137 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f9fc;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        .profile-card {
-            background-color: white;
-            width: 90%;
-            max-width: 800px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 40px;
-        }
-
-        .profile-card header {
-            background-color: var(--primary-color);
-            padding: 25px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .profile-card header img {
-            border-radius: 50%;
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-        }
-
-        .profile-card header h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-
-        .profile-card header p {
-            font-size: 1rem;
-            color: #d8f1e2;
-            margin-top: 5px;
-        }
-
-        .profile-card section {
-            padding: 20px;
-            background-color: #fff;
-        }
-
-        .profile-card section .info {
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
-
-        .profile-card section .info strong {
-            font-weight: 600;
-            color: #333;
-        }
-
-        footer {
-            background-color: #f7f9fc;
-            text-align: center;
-            padding: 20px;
-            width: 100%;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        footer p {
-            color: #777;
-            font-size: 0.9rem;
-        }
-
-        /* Navbar inclusion style */
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .navbar ul {
-            display: flex;
-            justify-content: center;
-            padding: 10px 0;
-            list-style-type: none;
-        }
-
-        .navbar ul li {
-            margin: 0 15px;
-        }
-
-        .navbar ul li a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        .navbar ul li a:hover {
-            color: var(--primary-color);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary-color: #5046e5;
@@ -157,241 +28,185 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--background);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar {
             background-color: var(--primary-color);
             padding: 1rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .navbar a {
+        .navbar ul {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            gap: 2rem;
+        }
+
+        .navbar ul li a {
             color: white;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .navbar ul li a:hover {
+            opacity: 0.8;
         }
 
         .container {
+            flex: 1;
             max-width: 100%;
-            margin: 2rem auto;
-            padding: 0 1rem;
         }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 1.875rem;
-            font-weight: 600;
+        .profile-card {
+            background-color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             margin-bottom: 2rem;
-            color: var(--text-primary);
         }
 
-        h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-secondary);
+        .profile-header {
+            background-color: var(--primary-color);
+            padding: 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            object-fit: cover;
+            background-color: #ffffff;
         }
 
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
+        .profile-header-content h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-header-content p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .profile-content {
+            padding: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            background-color: var(--background);
+            padding: 1.5rem;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
         }
 
-        th {
-            background-color: var(--primary-color);
-            color: white;
+        .info-item strong {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
         }
 
-        tr:hover {
-            background-color: #f1f1f1;
-            cursor: pointer;
+        .info-item span {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
-        .form-link {
-            text-decoration: none;
-            color: inherit;
-            font-size: 12px;
-        }
-
-        .form-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-footer {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        /* New Form Button */
-        .new-form-button {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
+        footer {
+            background-color: white;
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
             text-align: center;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            margin-top: 1.5rem;
+            margin-top: auto;
         }
 
-        .new-form-button:hover {
-            background-color: var(--primary-hover);
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
-        .filters {
-        margin-bottom: 1.5rem;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
+        @media (max-width: 640px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
 
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        background: white;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-    }
+            .profile-picture {
+                width: 100px;
+                height: 100px;
+            }
 
-    .filter-btn.active {
-        background: var(--secondary-color);
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-    .form-type-indicator {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .form-type-question {
-        background: #e0f2fe;
-        color: #0369a1;
-    }
-
-    .form-type-notification {
-        background: #fef3c7;
-        color: #92400e;
-    }
-
-    .form-type-survey {
-        background: #dcfce7;
-        color: #166534;
-    }
-
-    .actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .action-btn {
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        color: var(--primary-color);
-        text-decoration: none;
-    }
-
-    .action-btn:hover {
-        background: var(--background);
-    }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
 <body>
-
     {% include 'staff_navbar.html' %}
-
+   
 
     <div class="container">
         <div class="profile-card">
-            <header>
-                <!-- Use the Staff data passed from Flask -->
-                <img src="{{ staff.profile_picture or 'https://via.placeholder.com/90x90.png?text=No+Image' }}" alt="Profile Picture">
-
-                <div>
+            <div class="profile-header">
+                <img 
+                    class="profile-picture" 
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23E2E8F0'/%3E%3Cpath d='M60 65c16.5 0 30-13.5 30-30S76.5 5 60 5 30 18.5 30 35s13.5 30 30 30zm0 10c-20 0-60 10-60 30v10h120v-10c0-20-40-30-60-30z' fill='%2394A3B8'/%3E%3C/svg%3E"
+                    alt="{{ staff.username }}'s profile picture"
+                >
+                <div class="profile-header-content">
                     <h2>{{ staff.username }}</h2>
                     <p>Staff Member</p>
                 </div>
-            </header>
-            <section>
-                <div class="info">
-                    <strong>Email:</strong> {{ staff.email or 'No email provided' }}
+            </div>
+            <div class="profile-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Email</strong>
+                        <span>{{ staff.email or 'No email provided' }}</span>
+                    </div>
+                    <div class="info-item" style="display: none;">
+                        <strong>Course</strong>
+                        <span>{{ staff.course or 'N/A' }}</span>
+                    </div>
+                    <div class="info-item" style="display: none;">
+                        <strong>Enrolled</strong>
+                        <span>{{ staff.enrollment_date or 'N/A' }}</span>
+                    </div>
+                    <div class="info-item" style="display: none;">
+                        <strong>Grade</strong>
+                        <span>{{ staff.grade or 'N/A' }}</span>
+                    </div>
                 </div>
-                <div class="info">
-                    <strong>Course:</strong> {{ staff.course or 'N/A' }}
-                </div>
-                <div class="info">
-                    <strong>Enrolled:</strong> {{ staff.enrollment_date or 'N/A' }}
-                </div>
-                <div class="info">
-                    <strong>Grade:</strong> {{ staff.grade or 'N/A' }}
-                </div>
-            </section>
+            </div>
         </div>
     </div>
 
     <footer>
-        <p>University &copy; 2025</p>
+        <p>University &copy; 2025. All rights reserved.</p>
     </footer>
-
 </body>
 
 </html>
