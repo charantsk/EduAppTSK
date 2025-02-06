@@ -74,7 +74,6 @@ textarea {
 }
 
 .button {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.5rem;
@@ -87,7 +86,6 @@ textarea {
 }
 
 .view-report-button {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.75rem 1.5rem;
@@ -111,7 +109,31 @@ textarea {
     transform: translateY(2px);
     box-shadow: none;
   }
+
+  .send-report-button {
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background-color:rgba(0, 62, 249, 0.63);  /* Refined yellow shade */
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Light shadow for depth */
+  }
   
+  .send-report-button:hover {
+    background-color: #ffdb00;  /* Slightly darker yellow on hover */
+    transform: translateY(-2px);  /* Small hover effect */
+  }
+  
+  .send-report-button:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
 
 .button-primary {
   background-color: var(--primary-color);
@@ -264,7 +286,7 @@ width: fit-content;
   }
   
   .question-type-btn {
-    background: #f8f9fa;
+    background: #ffffff;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
@@ -282,8 +304,43 @@ width: fit-content;
   
   .question-type-btn:hover,
   .question-type-btn.active {
-    background: #007bff;
+    background: #469fff;
     color: white;
     border-color: #007bff;
   }
   
+  .form-type-selector {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .form-type-option {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .form-type-option:hover {
+    background-color: var(--hover-color);
+  }
+  
+  .form-type-option.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color-light);
+  }
+  
+  .form-type-option i {
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .form-type-option span {
+    display: block;
+    font-size: 14px;
+  }

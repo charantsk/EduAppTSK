@@ -237,3 +237,9 @@ input[type="checkbox"] {
     color: #666;
     font-size: 0.9em;
 }
+
+.time-limit {
+    font-size: 1.2em;
+    color: #ff6347; /* A noticeable color */
+    margin-bottom: 15px;
+}

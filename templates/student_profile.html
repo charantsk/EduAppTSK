@@ -4,12 +4,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+    <title>Staff Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .profile-card {
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .profile-card header {
+            background-color: var(--primary-color);
+            padding: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .profile-card header img {
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+        }
+
+        .profile-card header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .profile-card header p {
+            font-size: 1rem;
+            color: #d8f1e2;
+            margin-top: 5px;
+        }
+
+        .profile-card section {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .profile-card section .info {
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .profile-card section .info strong {
+            font-weight: 600;
+            color: #333;
+        }
+
+        footer {
+            background-color: #f7f9fc;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        footer p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Navbar inclusion style */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .navbar ul {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            list-style-type: none;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary-color);
+        }
+    </style>
     <style>
         :root {
-            --primary-color: #5046e5;
+            --primary-color: #3bbf91;
             --primary-hover: #4038b6;
             --danger-color: #ef4444;
             --text-primary: #111827;
@@ -224,118 +353,44 @@
         background: var(--background);
     }
     </style>
-    
 </head>
 
 <body>
 
-    {% include 'staff_navbar.html' %}
+    {% include 'student_navbar.html' %}
 
 
     <div class="container">
-        <div class="card">
-            <h1>Staff Dashboard</h1>
-            <h2>All Your Forms</h2>
+        <div class="profile-card">
+            <header>
+                <!-- Use the Staff data passed from Flask -->
+                <img src="{{ student.profile_picture or 'https://via.placeholder.com/90x90.png?text=No+Image' }}" alt="Profile Picture">
 
-            <!-- <div class="filters">
-                <button class="filter-btn active" data-type="all">All Forms</button>
-                <button class="filter-btn" data-type="QUESTION_BANK">Question Banks</button>
-                <button class="filter-btn" data-type="NOTIFICATION">Notifications</button>
-                <button class="filter-btn" data-type="SURVEY">Surveys</button>
-            </div> -->
-
-            
-            <table id="forms-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Title</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Forms will be populated here -->
-                </tbody>
-            </table>
-
-
-            <a href="http://127.0.0.1:5000/staff/create_form" class="new-form-button">
-                <i class="fas fa-plus-circle"></i> Create New Form
-            </a>
+                <div>
+                    <h2>{{ student.username }}</h2>
+                    <p>Staff Member</p>
+                </div>
+            </header>
+            <section>
+                <div class="info">
+                    <strong>Email:</strong> {{ student.email or 'No email provided' }}
+                </div>
+                <div class="info">
+                    <strong>Course:</strong> {{ student.course or 'N/A' }}
+                </div>
+                <div class="info">
+                    <strong>Enrolled:</strong> {{ student.enrollment_date or 'N/A' }}
+                </div>
+                <div class="info">
+                    <strong>Grade:</strong> {{ student.grade or 'N/A' }}
+                </div>
+            </section>
         </div>
     </div>
 
-    <!-- Modal to view form details -->
-    <div id="formModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>View Form</h2>
-            </div>
-            <div id="modalBody">
-                <!-- Dynamic form content will go here -->
-            </div>
-            <div class="modal-footer">
-                <button class="button button-danger" onclick="closeModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Function to fetch forms from the API
-        async function fetchForms() {
-    try {
-        const response = await fetch('/api/forms');
-        if (!response.ok) {
-            throw new Error('Failed to fetch forms');
-        }
-        const data = await response.json();
-        renderForms(data);
-    } catch (error) {
-        console.error('Error fetching forms:', error);
-        // You might want to show an error message to the user
-    }
-}
-        // Function to render the forms in the table
-        function renderForms(data) {
-    const tableBody = document.querySelector("#forms-table tbody");
-    tableBody.innerHTML = ''; // Clear existing rows
-
-    // Combine forms and notifications arrays
-    const allForms = [...(data.forms || []), ...(data.notifications || [])];
-
-    if (allForms.length === 0) {
-        const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `
-            <td colspan="3" class="text-center py-4">
-                No forms found. Create a new form to get started.
-            </td>
-        `;
-        tableBody.appendChild(emptyRow);
-        return;
-    }
-
-    allForms.forEach(form => {
-        const row = document.createElement('tr');
-        const createdAt = new Date(form.created_at).toLocaleDateString();
-        row.innerHTML = `
-            <td>${form.title}</td>
-            <td>${form.description || ''}</td>
-            <td>
-                <a href="/staff/view_form?form_id=${form.id}" class="form-link">View/Edit</a>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
-
-        // Initial fetch when the page loads
-        // Initial fetch when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    fetchForms();
-});
-        // Remove the modal-related code since we're now navigating to a new page
-        // Remove openModal and closeModal functions
-    </script>
+    <footer>
+        <p>University &copy; 2025</p>
+    </footer>
 
 </body>
 

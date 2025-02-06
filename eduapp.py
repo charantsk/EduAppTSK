@@ -6,6 +6,7 @@ import enum
 from datetime import datetime
 import json
 from flask import render_template,redirect,url_for
+from datetime import datetime, timezone
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this in production
@@ -117,7 +118,9 @@ def calculate_score(form_id, responses):
         if str(question.id) in responses_dict:
             student_answer = str(responses_dict[str(question.id)]).strip().lower()
             correct_answer = str(question.correct_answer).strip().lower()
-            if student_answer == correct_answer:
+            
+            # If correct answer is 'null', consider any answer as correct
+            if correct_answer == 'null' or student_answer == correct_answer:
                 total_score += question.points
     
     return (total_score / total_points * 100) if total_points > 0 else 0
@@ -313,8 +316,6 @@ def get_all_forms():
 
     return jsonify(forms_data)
 
-
-
 @app.route('/api/forms/<int:form_id>', methods=['GET'])
 @login_required
 def get_form_details(form_id):
@@ -397,7 +398,7 @@ def get_form_submissions(form_id):
         'id': sub.id,
         'user_id': sub.user_id,
         'responses': json.loads(sub.responses),
-        'submitted_at': sub.submitted_at.isoformat(),
+        'submitted_at': datetime.now(timezone.utc),
         'score': sub.score if form.form_type == FormType.QUESTION_BANK else None,
         'form_type': form.form_type.value,
         'questions': questions  # Include questions data
@@ -446,8 +447,28 @@ def dashboard():
         return render_template('student_dashboard.html')
     return jsonify({"error": "Unauthorized"}), 403
 
+@app.route('/student_profile')
+@login_required  # Ensure user is logged in
+def student_profile():
+    # Fetch the actual student data from the database (assuming current_user is a student)
+    student = current_user  # Or you can fetch a specific student using their ID
+    
+    return render_template('student_profile.html', student=student)
+
+
+@app.route('/staff_profile')
+@login_required  # Ensure user is logged in
+def staff_profile():
+    # Fetch the actual student data from the database (assuming current_user is a student)
+    staff = current_user  # Or you can fetch a specific student using their ID
+    
+    return render_template('staff_profile.html', staff=staff)
+
+
+
 
 @app.route('/register_user', methods=['GET', 'POST'])
+@requires_role(UserRole.STAFF)
 def create_user_page():
     return render_template('create_user.html')
 

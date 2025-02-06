@@ -100,19 +100,29 @@
     </div>
 
     <div class="navbar-links">
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-plus"></i> Create Form
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-poll"></i> Survey
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-bell"></i> Notification
         </a>
+
+        <a href="{{ url_for('create_user_page') }}" class="nav-item">
+            <i class="fas fa-users"></i> Manage Profiles
+        </a>
+        <a href="{{ url_for('staff_profile') }}" class="nav-item">
+            <i class="fas fa-id-badge"></i> Profile
+        </a>
+        
+        
         <div class="logout-btn" id="logout-btn">
             <i class="fas fa-sign-out-alt"></i> Logout
         </div>
     </div>
+    
 
     <div class="hamburger" id="hamburger-icon">
         <i class="fas fa-bars"></i>

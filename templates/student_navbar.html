@@ -100,22 +100,27 @@
     </div>
 
     <div class="navbar-links">
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-book"></i> My Courses
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-calendar-alt"></i> Calendar
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-bell"></i> Notifications
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" style="display: none;">
             <i class="fas fa-file-alt"></i> Assignments
         </a>
+        <a href="{{ url_for('student_profile') }}" class="nav-item">
+            <i class="fas fa-user"></i> Profile
+        </a>
+        
         <div class="logout-btn" id="logout-btn">
             <i class="fas fa-sign-out-alt"></i> Logout
         </div>
     </div>
+    
 
     <div class="hamburger" id="hamburger-icon">
         <i class="fas fa-bars"></i>

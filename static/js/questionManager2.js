@@ -1,179 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View/Edit Form</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_form.css') }}"> <!-- Link to local student_css -->
-    <script src="{{ url_for('static', filename='js/question_type.js') }}"></script>
-
-    
-</head>
-<body>
-    {% include 'staff_navbar.html' %}
-
-    <div class="container">
-        <div class="form-group">
-            <button class="button button-primary" onclick="saveForm()">
-                <i class="fas fa-save" style="margin-right: 8px;"></i> Save
-            </button>
-        </div>
-        
-        <div class="card">
-            <h1>Edit Form</h1>
-
-            <div class="form-group" style="display: none;">
-                <label for="form-type">Form Type</label>
-                <select id="form-type">
-                  <option value="NOTIFICATION">Notification</option>
-                  <option value="QUESTION_BANK">Question Bank</option>
-                  <option value="SURVEY">Survey</option>
-                </select>
-              </div>
-            
-            <div class="form-group">
-                <label for="form-title">Form Title</label>
-                <input type="text" id="form-title" placeholder="Enter a title for your form">
-            </div>
-            
-           
-
-            <div class="form-group">
-                <label for="form-description">Form Description</label>
-                <textarea id="form-description" placeholder="Describe your form"></textarea>
-            </div>
-
-            <!-- Move the timer section here -->
-      <div class="form-group" id="timer-section" style="display: none;">
-        <label for="form-timer">Time Limit (minutes)</label>
-        <input 
-          type="number" 
-          id="form-timer" 
-          min="1" 
-          max="180" 
-          value="30" 
-          placeholder="Enter time limit in minutes"
-        >
-        <small style="color: var(--text-secondary);">Set a time limit for this question bank (1-180 minutes)</small>
-      </div>
-
-            <div class="form-group" id="notification-recipients" style="display: none;">
-                <label for="notification-recipients-select">Recipients</label>
-                <select id="notification-recipients-select">
-                    <option value="staff">Staff</option>
-                    <option value="students">Students</option>
-                    <option value="both">Both</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="push-notification-container" style="display: none;">
-                <button class="button button-primary" onclick="enablePushNotification()">Push Notifications Via Email</button>
-            </div>
-            
-            
-
-        </div>
-
-        <div class="card questionscard">
-            <div class="form-group">
-                <button class="button button-primary" onclick="openQuestionModal()">Add Question / Field</button>
-            </div>
-
-            <div class="questions-list" id="questions-container">
-                <!-- Questions will be rendered here -->
-            </div>
-        </div>
-
-        
-       
-
-        <!-- Submissions Section -->
-        <div class="card submissionscard">
-            <h2>Submissions</h2>
-            <div id="submissions-container">
-                <!-- Submissions will be rendered here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Question Modal -->
-   <!-- Question Modal -->
-<div class="modal" id="question-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Add Question / Field</h2>
-      </div>
-  
-      <div class="form-group">
-        <label for="question-text">Question Text</label>
-        <input type="text" id="question-text" placeholder="Enter your question">
-      </div>
-  
-      <div class="form-group">
-        <label>Question Type</label>
-        <div id="question-type-container" class="question-type-options">
-          <button class="question-type-btn" data-type="SINGLE_WORD"><i class="fas fa-font"></i> Single Word</button>
-          <button class="question-type-btn" data-type="MULTI_WORD"><i class="fas fa-align-left"></i> Multi Word</button>
-          <button class="question-type-btn" data-type="TRUE_FALSE"><i class="fas fa-check-circle"></i> True/False</button>
-          <button class="question-type-btn" data-type="ATTACHMENT"><i class="fas fa-paperclip"></i> Attachment</button>
-          <button class="question-type-btn" data-type="LINK"><i class="fas fa-link"></i> Link</button>
-          <button class="question-type-btn" data-type="NUMBER"><i class="fas fa-hashtag"></i> Number</button>
-          <button class="question-type-btn" data-type="DATE"><i class="fas fa-calendar-alt"></i> Date</button>
-          <button class="question-type-btn" data-type="MULTIPLE_CHOICE"><i class="fas fa-list"></i> Multiple Choice</button>
-          <button class="question-type-btn" data-type="CHECKBOX"><i class="fas fa-check-square"></i> Checkbox</button>
-        </div>
-      </div>
-      
-      <!-- Hidden Input to Store Selected Type -->
-      <input type="hidden" id="question-type" value="SINGLE_WORD">
-      
-  
-      <div class="form-group">
-        <label for="correct-answer">Correct Answer</label>
-        <input type="text" id="correct-answer" placeholder="Enter the correct answer">
-      </div>
-  
-      <div class="form-group">
-        <label for="points">Points</label>
-        <input type="number" id="points" value="1" min="1">
-      </div>
-  
-      <!-- Toggle for adding image -->
-      <div class="form-group">
-        <label for="add-image">Show Image?</label>
-        <input type="checkbox" id="add-image" onclick="toggleImageUpload()">
-      </div>
-  
-      <!-- Image upload section, initially hidden -->
-      <div class="form-group" id="image-upload-section" style="display: none;">
-        <label for="image-upload">Upload Image</label>
-        <input type="file" id="image-upload" accept="image/*">
-      </div>
-  
-      <div class="modal-footer">
-        <button class="button button-primary" onclick="addQuestion()">Add Question</button>
-        <button class="button" onclick="closeModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-  
-  <script>
-    function toggleImageUpload() {
-      const imageUploadSection = document.getElementById('image-upload-section');
-      const addImageCheckbox = document.getElementById('add-image');
-      
-      // Toggle visibility of the image upload section based on the checkbox state
-      if (addImageCheckbox.checked) {
-        imageUploadSection.style.display = 'block';
-      } else {
-        imageUploadSection.style.display = 'none';
-      }
-    }
-  </script>
-  
-    <script>
         let formId = null;
         let questions = [];
         let editingQuestionIndex = null;
@@ -225,8 +49,7 @@
             const question = questions[questionId];
             if (!question) return ''; // Skip if question not found
             
-            // Check if correct answer is 'null' or if student answer matches correct answer
-            const isCorrect = question.correct_answer === 'null' || question.correct_answer.toLowerCase() === String(answer).toLowerCase();
+            const isCorrect = question.correct_answer.toLowerCase() === String(answer).toLowerCase();
             
             return `
                 <div class="response-item" style="margin: 0.8rem 0; padding: 1rem; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid ${isCorrect ? '#10B981' : '#EF4444'}">
@@ -263,8 +86,6 @@
         }).join('');
 }
 
-
-// Updated renderSubmissions function with Font Awesome icons
 function renderSubmissions(submissions) {
     const container = document.getElementById('submissions-container');
     const submissionsCard = container.closest('.card');
@@ -287,15 +108,8 @@ function renderSubmissions(submissions) {
                     <p><strong>Submitted:</strong> ${new Date(sub.submitted_at).toLocaleString()}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <button class="button button-danger" onclick="deleteSubmission(${sub.id}); event.stopPropagation();">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                    <button class="view-report-button" onclick="toggleResponses(${sub.id}); event.stopPropagation();">
-                        <i class="fas fa-eye"></i> View Report
-                    </button>
-                    <button class="send-report-button" onclick="sendReport(${sub.id}); event.stopPropagation();">
-                        <i class="fas fa-paper-plane"></i> Send Report
-                    </button>
+                    <button class="button button-danger" onclick="deleteSubmission(${sub.id}); event.stopPropagation();">Delete</button>
+                    <button class="view-report-button" onclick="toggleResponses(${sub.id}); event.stopPropagation();">View Report</button>
                 </div>
             </div>
             <div class="submission-responses" id="responses-${sub.id}" style="display: none; margin-top: 1rem;">
@@ -304,33 +118,6 @@ function renderSubmissions(submissions) {
         </div>
     `).join('');
 }
-
-// Function to send the report (example using a basic fetch, adapt for your backend)
-function sendReport(submissionId) {
-    const responsesDiv = document.getElementById(`responses-${submissionId}`);
-    const submissionData = {
-        submissionId,
-        report: responsesDiv.innerHTML // You can adjust this to include more data
-    };
-
-    fetch('/api/send_report', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Report sent successfully!');
-    })
-    .catch(error => {
-        console.error('Error sending report:', error);
-        alert('Failed to send the report.');
-    });
-}
-
-
 
 
 function toggleResponses(submissionId) {
@@ -513,55 +300,3 @@ function renderQuestions() {
                 alert(`Error updating form: ${error.message}`);
             });
         }
-    </script>
-
-<script>
-document.getElementById('form-type').addEventListener('change', function () {
-    let questionsCard = document.querySelector('.questions-list').closest('.card');
-    let pushNotificationContainer = document.getElementById('push-notification-container');
-    let notificationRecipients = document.getElementById('notification-recipients');
-    
-    if (this.value === 'NOTIFICATION') {
-        questionsCard.style.display = 'none';
-        pushNotificationContainer.style.display = 'block'; // Show the button
-        notificationRecipients.style.display = 'block'; // Show the recipients select
-    } else {
-        questionsCard.style.display = 'block';
-        pushNotificationContainer.style.display = 'none'; // Hide the button
-        notificationRecipients.style.display = 'none'; // Hide the recipients select
-    }
-});
-
-// Trigger the change event on page load to apply the logic initially
-document.getElementById('form-type').dispatchEvent(new Event('change'));
-
-
-// Optional function to handle the push notification button click
-function enablePushNotification() {
-    alert('Push notifications via email enabled!');
-}
-
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const questionTypeButtons = document.querySelectorAll(".question-type-btn");
-  
-    questionTypeButtons.forEach(button => {
-      button.addEventListener("click", function() {
-        // Remove active class from all buttons
-        questionTypeButtons.forEach(btn => btn.classList.remove("active"));
-        
-        // Add active class to the selected button
-        this.classList.add("active");
-        
-        // Set selected type to hidden input
-        document.getElementById("question-type").value = this.dataset.type;
-      });
-    });
-  });
-  
-  </script>
-
-</body>
-</html>
