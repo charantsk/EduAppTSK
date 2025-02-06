@@ -5,286 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View/Edit Form</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --primary-color: #5046e5;
-        --primary-hover: #4038b6;
-        --danger-color: #ef4444;
-        --text-primary: #111827;
-        --text-secondary: #6b7280;
-        --border-color: #e5e7eb;
-        --background: #f9fafb;
-      }
-  
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-  
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--background);
-        color: var(--text-primary);
-        line-height: 1.5;
-      }
-  
-      .container {
-        max-width: 100%;
-        margin: 2rem auto;
-        padding: 0 1rem;
-      }
-  
-      .card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        margin-bottom: 1.5rem;
-      }
-  
-      h1 {
-        font-size: 1.875rem;
-        font-weight: 600;
-        margin-bottom: 2rem;
-        color: var(--text-primary);
-      }
-  
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-  
-      label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: var(--text-primary);
-      }
-  
-      input, textarea, select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease;
-      }
-  
-      input:focus, textarea:focus, select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(80, 70, 229, 0.1);
-      }
-  
-      textarea {
-        min-height: 100px;
-      }
-  
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-  
-      .button-primary {
-        background-color: var(--primary-color);
-        color: white;
-      }
-  
-      .button-primary:hover {
-        background-color: var(--primary-hover);
-      }
-  
-      .button-danger {
-        background-color: var(--danger-color);
-        color: white;
-      }
-  
-      .questions-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-  
-      .question-item {
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: move;
-      }
-  
-      .question-item:hover {
-        border-color: var(--primary-color);
-      }
-  
-      .question-content {
-        flex: 1;
-      }
-  
-      .question-actions {
-        display: flex;
-        gap: 0.5rem;
-      }
-  
-      .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
-  
-      .modal-content {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      }
-  
-      .modal-header {
-        margin-bottom: 1.5rem;
-      }
-  
-      .modal-footer {
-        margin-top: 1.5rem;
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-      }
-  
-      .dragging {
-        opacity: 0.5;
-        background: var(--background);
-      }
-  
-      @media (max-width: 640px) {
-        .container {
-          margin: 1rem auto;
-        }
-  
-        .card {
-          padding: 1.5rem;
-        }
-  
-        .question-item {
-          flex-direction: column;
-          gap: 1rem;
-        }
-  
-        .question-actions {
-          width: 100%;
-          justify-content: flex-end;
-        }
-      }
-  
-      .navbar {
-              background-color: var(--primary-color);
-              padding: 1rem;
-              color: white;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-          }
-  
-          .navbar a {
-              color: white;
-              text-decoration: none;
-              font-weight: 600;
-              font-size: 1rem;
-          }
-  
-  
-        .save-form-button{
-          background-color: var(--primary-color);
-      color: white;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      font-weight: 600;
-      text-align: center;
-      display: inline-flex
-  ;
-      align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
-      margin-top: 1.5rem;
-      width: fit-content;
-        }
-  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_form.css') }}"> <!-- Link to local student_css -->
 
-        .submission-item {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.submission-header:hover {
-    background-color: var(--background);
-}
-
-.toggle-icon {
-    margin-left: 1rem;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
-
-.submission-responses {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-}
-
-.response-item {
-    transition: all 0.3s ease;
-}
-
-.response-item:hover {
-    transform: translateX(4px);
-}
-
-.answer-box {
-    transition: all 0.3s ease;
-}
-
-.answer-box:hover {
-    transform: scale(1.02);
-}
-
-.submission-header {
-    padding: 0.75rem;
-    border-radius: 8px;
-}
-    </style>
+    
 </head>
 <body>
     {% include 'staff_navbar.html' %}
 
     <div class="container">
+        <div class="form-group">
+            <button class="button button-primary" onclick="saveForm()">
+                <i class="fas fa-save" style="margin-right: 8px;"></i> Save
+            </button>
+        </div>
+        
         <div class="card">
             <h1>Edit Form</h1>
-            
-            <div class="form-group">
-                <label for="form-title">Form Title</label>
-                <input type="text" id="form-title" placeholder="Enter a title for your form">
-            </div>
-            
+
             <div class="form-group">
                 <label for="form-type">Form Type</label>
                 <select id="form-type">
@@ -293,6 +31,13 @@
                   <option value="SURVEY">Survey</option>
                 </select>
               </div>
+            
+            <div class="form-group">
+                <label for="form-title">Form Title</label>
+                <input type="text" id="form-title" placeholder="Enter a title for your form">
+            </div>
+            
+           
 
             <div class="form-group">
                 <label for="form-description">Form Description</label>
@@ -316,9 +61,9 @@
 
         </div>
 
-        <div class="card">
+        <div class="card questionscard">
             <div class="form-group">
-                <button class="button button-primary" onclick="openQuestionModal()">Add Question</button>
+                <button class="button button-primary" onclick="openQuestionModal()">Add Question / Field</button>
             </div>
 
             <div class="questions-list" id="questions-container">
@@ -327,12 +72,10 @@
         </div>
 
         
-        <div class="form-group">
-            <button class="button button-primary" onclick="saveForm()" >Save Changes</button>
-        </div>
+       
 
         <!-- Submissions Section -->
-        <div class="card">
+        <div class="card submissionscard">
             <h2>Submissions</h2>
             <div id="submissions-container">
                 <!-- Submissions will be rendered here -->
@@ -341,50 +84,76 @@
     </div>
 
     <!-- Question Modal -->
-    <div class="modal" id="question-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add/Edit Question</h2>
-            </div>
-
-            <div class="form-group">
-                <label for="question-text">Question Text</label>
-                <input type="text" id="question-text" placeholder="Enter your question">
-            </div>
-
-            <div class="form-group">
-                <label for="question-type">Question Type</label>
-                <select id="question-type">
-                    <option value="SINGLE_WORD">Single Word</option>
-                    <option value="MULTI_WORD">Multi Word</option>
-                    <option value="TRUE_FALSE">True/False</option>
-                    <option value="ATTACHMENT">Attachment</option>
-                    <option value="LINK">Link</option>
-                    <option value="NUMBER">Number</option>
-                    <option value="DATE">Date</option>
-                    <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-                    <option value="CHECKBOX">Checkbox</option>
-                </select>
-                
-            </div>
-
-            <div class="form-group">
-                <label for="correct-answer">Correct Answer</label>
-                <input type="text" id="correct-answer" placeholder="Enter the correct answer">
-            </div>
-
-            <div class="form-group">
-                <label for="points">Points</label>
-                <input type="number" id="points" value="1" min="1">
-            </div>
-
-            <div class="modal-footer">
-                <button class="button button-primary" onclick="saveQuestion()">Save Question</button>
-                <button class="button" onclick="closeModal()">Cancel</button>
-            </div>
-        </div>
+   <!-- Question Modal -->
+<div class="modal" id="question-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Question / Field</h2>
+      </div>
+  
+      <div class="form-group">
+        <label for="question-text">Question Text</label>
+        <input type="text" id="question-text" placeholder="Enter your question">
+      </div>
+  
+      <div class="form-group">
+        <label for="question-type">Question Type</label>
+        <select id="question-type">
+          <option value="SINGLE_WORD">Single Word</option>
+          <option value="MULTI_WORD">Multi Word</option>
+          <option value="TRUE_FALSE">True/False</option>
+          <option value="ATTACHMENT">Attachment</option>
+          <option value="LINK">Link</option>
+          <option value="NUMBER">Number</option>
+          <option value="DATE">Date</option>
+          <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+          <option value="CHECKBOX">Checkbox</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="correct-answer">Correct Answer</label>
+        <input type="text" id="correct-answer" placeholder="Enter the correct answer">
+      </div>
+  
+      <div class="form-group">
+        <label for="points">Points</label>
+        <input type="number" id="points" value="1" min="1">
+      </div>
+  
+      <!-- Toggle for adding image -->
+      <div class="form-group">
+        <label for="add-image">Add Image?</label>
+        <input type="checkbox" id="add-image" onclick="toggleImageUpload()">
+      </div>
+  
+      <!-- Image upload section, initially hidden -->
+      <div class="form-group" id="image-upload-section" style="display: none;">
+        <label for="image-upload">Upload Image</label>
+        <input type="file" id="image-upload" accept="image/*">
+      </div>
+  
+      <div class="modal-footer">
+        <button class="button button-primary" onclick="addQuestion()">Add Question</button>
+        <button class="button" onclick="closeModal()">Cancel</button>
+      </div>
     </div>
-
+  </div>
+  
+  <script>
+    function toggleImageUpload() {
+      const imageUploadSection = document.getElementById('image-upload-section');
+      const addImageCheckbox = document.getElementById('add-image');
+      
+      // Toggle visibility of the image upload section based on the checkbox state
+      if (addImageCheckbox.checked) {
+        imageUploadSection.style.display = 'block';
+      } else {
+        imageUploadSection.style.display = 'none';
+      }
+    }
+  </script>
+  
     <script>
         let formId = null;
         let questions = [];
@@ -400,19 +169,27 @@
         });
 
         function loadFormData() {
-            fetch(`/api/forms/${formId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('form-title').value = data.title;
-                    document.getElementById('form-description').value = data.description;
-                    questions = data.questions;
-                    renderQuestions();
-                })
-                .catch(error => {
-                    console.error('Error loading form:', error);
-                    alert('Error loading form data');
-                });
-        }
+    fetch(`/api/forms/${formId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('form-title').value = data.title;
+            document.getElementById('form-description').value = data.description;
+            const formTypeElement = document.getElementById('form-type');
+            formTypeElement.value = data.type;  // Set the form-type value
+
+            // Simulate a change event to ensure the selection is reflected
+            const event = new Event('change');
+            formTypeElement.dispatchEvent(event);
+
+            questions = data.questions;
+            renderQuestions();
+        })
+        .catch(error => {
+            console.error('Error loading form:', error);
+            alert('Error loading form data');
+        });
+}
+
 
         function loadSubmissions() {
             fetch(`/api/forms/${formId}/submissions`)
@@ -479,8 +256,7 @@ function renderSubmissions(submissions) {
 
     container.innerHTML = submissions.map(sub => `
         <div class="submission-item card" style="margin-bottom: 1rem; padding: 1rem;">
-            <div class="submission-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" 
-                 onclick="toggleResponses(${sub.id})">
+            <div class="submission-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
                 <div>
                     <p><strong>User ID:</strong> ${sub.user_id}</p>
                     ${sub.form_type === 'question_bank' ? 
@@ -490,7 +266,7 @@ function renderSubmissions(submissions) {
                 </div>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <button class="button button-danger" onclick="deleteSubmission(${sub.id}); event.stopPropagation();">Delete</button>
-                    <span class="toggle-icon">▼</span>
+                    <button class="view-report-button" onclick="toggleResponses(${sub.id}); event.stopPropagation();">View Report</button>
                 </div>
             </div>
             <div class="submission-responses" id="responses-${sub.id}" style="display: none; margin-top: 1rem;">
@@ -500,18 +276,20 @@ function renderSubmissions(submissions) {
     `).join('');
 }
 
+
 function toggleResponses(submissionId) {
     const responsesDiv = document.getElementById(`responses-${submissionId}`);
-    const toggleIcon = responsesDiv.parentElement.querySelector('.toggle-icon');
+    const button = responsesDiv.parentElement.querySelector('.view-report-button');
     
     if (responsesDiv.style.display === 'none') {
         responsesDiv.style.display = 'block';
-        toggleIcon.textContent = '▲';
+        button.textContent = 'Hide Report';
     } else {
         responsesDiv.style.display = 'none';
-        toggleIcon.textContent = '▼';
+        button.textContent = 'View Report';
     }
 }
+
         function deleteSubmission(submissionId) {
             if (confirm('Are you sure you want to delete this submission?')) {
                 fetch(`/api/forms/submissions/${submissionId}`, {
@@ -569,22 +347,55 @@ function toggleResponses(submissionId) {
             closeModal();
         }
 
-        function renderQuestions() {
-            const container = document.getElementById('questions-container');
-            container.innerHTML = questions.map((question, index) => `
-                <div class="question-item">
-                    <div class="question-content">
-                        <strong>${question.text}</strong><br>
-                        Type: ${question.type}, Points: ${question.points}
-                        <p>Correct Answer: ${question.correct_answer}</p>
-                    </div>
-                    <div class="question-actions">
-                        <button class="button" onclick="openQuestionModal(${index})">Edit</button>
-                        <button class="button button-danger" onclick="deleteQuestion(${index})">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+        // Add a new question
+        function addQuestion() {
+    const questionText = document.getElementById('question-text').value;
+    const questionType = document.getElementById('question-type').value;
+    const correctAnswer = document.getElementById('correct-answer').value;
+    const points = document.getElementById('points').value;
+    const addImage = document.getElementById('add-image').checked;
+    const imageFile = document.getElementById('image-upload').files[0];
+
+    // Validate that the question text and correct answer are provided
+    if (!questionText || !correctAnswer) {
+        alert('Please fill in both the question text and correct answer.');
+        return;
+    }
+
+    const newQuestion = {
+        text: questionText,
+        type: questionType,
+        correct_answer: correctAnswer, // Ensure correct_answer is correctly set
+        points: points,
+        add_image: addImage,
+        image: imageFile ? imageFile.name : null, // Store image file name if uploaded
+    };
+
+    // Add the question to the list and re-render
+    questions.push(newQuestion);
+    renderQuestions();
+
+    // Close the modal after adding the question
+    closeModal();
+}
+
+function renderQuestions() {
+    const questionsContainer = document.getElementById('questions-container');
+    questionsContainer.innerHTML = '';
+
+    questions.forEach((question, index) => {
+        const questionElement = document.createElement('div');
+        questionElement.classList.add('question-item');
+        questionElement.innerHTML = `
+            <strong>${question.text}</strong> 
+            <p>Type: ${question.type}</p>
+            <p>Correct Answer: ${question.correct_answer}</p>
+            <p>Points: ${question.points}</p>
+        `;
+        questionsContainer.appendChild(questionElement);
+    });
+}
+
 
         function deleteQuestion(index) {
             if (confirm('Are you sure you want to delete this question?')) {

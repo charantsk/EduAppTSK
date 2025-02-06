@@ -100,6 +100,7 @@
         .form-link {
             text-decoration: none;
             color: inherit;
+            font-size: 12px;
         }
 
         .form-link:hover {
@@ -158,6 +159,70 @@
         .new-form-button:hover {
             background-color: var(--primary-hover);
         }
+
+        .filters {
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .form-type-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .form-type-question {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .form-type-notification {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .form-type-survey {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        background: var(--background);
+    }
     </style>
     
 </head>
@@ -171,18 +236,29 @@
         <div class="card">
             <h1>Staff Dashboard</h1>
             <h2>Your Forms:</h2>
+
+            <div class="filters">
+                <button class="filter-btn active" data-type="all">All Forms</button>
+                <button class="filter-btn" data-type="QUESTION_BANK">Question Banks</button>
+                <button class="filter-btn" data-type="NOTIFICATION">Notifications</button>
+                <button class="filter-btn" data-type="SURVEY">Surveys</button>
+            </div>
+
+            
             <table id="forms-table">
                 <thead>
                     <tr>
+                        <th>Type</th>
                         <th>Title</th>
-                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Form rows will be dynamically populated here -->
+                    <!-- Forms will be populated here -->
                 </tbody>
             </table>
+
+
             <a href="http://127.0.0.1:5000/staff/create_form" class="new-form-button">
                 <i class="fas fa-plus-circle"></i> Create New Form
             </a>
@@ -245,7 +321,7 @@
             <td>${form.title}</td>
             <td>${form.description || ''}</td>
             <td>
-                <a href="/staff/view_form?form_id=${form.id}" class="form-link">View</a>
+                <a href="/staff/view_form?form_id=${form.id}" class="form-link">View/Edit</a>
             </td>
         `;
         tableBody.appendChild(row);

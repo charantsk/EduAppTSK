@@ -40,7 +40,6 @@ class FormType(enum.Enum):
     QUESTION_BANK = "question_bank"
     SURVEY = "survey"
 
-
 # Database Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
