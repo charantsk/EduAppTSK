@@ -10,13 +10,15 @@ Credentials :
 - Username: admin2  
 - Password: admin2
 
-![image](https://github.com/user-attachments/assets/381f7a04-95d4-42cf-92f5-8409c722f208)
-![image](https://github.com/user-attachments/assets/8b93d47e-852c-4fa6-b008-0b7cc5e0c982)
-![image](https://github.com/user-attachments/assets/9f083c84-2cc9-410d-add2-1bfb48ecd253)
-![image](https://github.com/user-attachments/assets/af98cd30-6069-4be6-b7ce-dd91594179d5)
-![image](https://github.com/user-attachments/assets/589c10af-08e1-43e4-b6ba-8617b8d10e37)
-![image](https://github.com/user-attachments/assets/a015dd11-c6cb-4585-b556-71c2bbbe4cd7)
-![image](https://github.com/user-attachments/assets/d1cebf3d-e3e7-4479-89ef-cf1eab5eb25b)
+![image](https://github.com/user-attachments/assets/2bdfd42c-91ac-41e4-a4da-db25d7db67f4)
+![image](https://github.com/user-attachments/assets/72c20494-7f4a-4b92-b479-f932dea2132e)
+![image](https://github.com/user-attachments/assets/e86660dc-2344-4878-b268-d889a95a24e0)
+![image](https://github.com/user-attachments/assets/e55cadb3-94ea-4223-8c3a-85f418ce66fe)
+![image](https://github.com/user-attachments/assets/5dad585e-6fb9-4cd1-be48-b1f3cbb4f190)
+![image](https://github.com/user-attachments/assets/f6185697-dc3a-4352-b4cc-8a9c73bc126c)
+
+
+
 
 
 
