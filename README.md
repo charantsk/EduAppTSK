@@ -36,7 +36,8 @@ Credentials :
 - Username: student  
 - Password: student
 
-![image](https://github.com/user-attachments/assets/e15a85eb-4cef-45ba-a503-ea895541d0e7)
+![WhatsApp Image 2025-02-11 at 2 14 15 PM](https://github.com/user-attachments/assets/698d3bc2-527a-432d-837b-d75b2157626c)
+![WhatsApp Image 2025-02-11 at 2 14 15 PM (1)](https://github.com/user-attachments/assets/307cc148-f755-41f3-9184-c05ab896a6da)
 ![image](https://github.com/user-attachments/assets/977b8470-a25c-422a-a419-8dfec1227846)
 ![image](https://github.com/user-attachments/assets/3992f88e-de3f-4755-b144-31c924d24bea)
 ![image](https://github.com/user-attachments/assets/070f8676-8cdd-496f-a128-aed2ef5edf88)
