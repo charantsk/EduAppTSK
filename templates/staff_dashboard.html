@@ -7,224 +7,47 @@
     <title>Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}"> 
     <style>
-        :root {
-            --primary-color: #5046e5;
-            --primary-hover: #4038b6;
-            --danger-color: #ef4444;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --background: #f9fafb;
-        }
+        .btn {
+    width: fit-content;
+    padding: 0.8rem;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+.view-btn {
+    background-color: var(--primary-color);
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
+.view-btn:hover {
+    background-color: darken(var(--primary-color), 10%);
+}
 
-        .navbar {
-            background-color: var(--primary-color);
-            padding: 1rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.delete-btn {
+    background-color: #e74c3c;
+}
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-        }
+.delete-btn:hover {
+    background-color: #c0392b;
+}
 
-        .container {
-            max-width: 100%;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+/* Ensure buttons are displayed properly */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 1.875rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            color: var(--text-primary);
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-secondary);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-            cursor: pointer;
-        }
-
-        .form-link {
-            text-decoration: none;
-            color: inherit;
-            font-size: 12px;
-        }
-
-        .form-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-footer {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        /* New Form Button */
-        .new-form-button {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            margin-top: 1.5rem;
-        }
-
-        .new-form-button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .filters {
-        margin-bottom: 1.5rem;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        background: white;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-    }
-
-    .filter-btn.active {
-        background: var(--secondary-color);
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-    .form-type-indicator {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .form-type-question {
-        background: #e0f2fe;
-        color: #0369a1;
-    }
-
-    .form-type-notification {
-        background: #fef3c7;
-        color: #92400e;
-    }
-
-    .form-type-survey {
-        background: #dcfce7;
-        color: #166534;
-    }
-
-    .actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .action-btn {
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        color: var(--primary-color);
-        text-decoration: none;
-    }
-
-    .action-btn:hover {
-        background: var(--background);
-    }
     </style>
-    
 </head>
 
 <body>
@@ -248,8 +71,8 @@
             <table id="forms-table">
                 <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Title</th>
+                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -280,63 +103,7 @@
         </div>
     </div>
 
-    <script>
-        // Function to fetch forms from the API
-        async function fetchForms() {
-    try {
-        const response = await fetch('/api/forms');
-        if (!response.ok) {
-            throw new Error('Failed to fetch forms');
-        }
-        const data = await response.json();
-        renderForms(data);
-    } catch (error) {
-        console.error('Error fetching forms:', error);
-        // You might want to show an error message to the user
-    }
-}
-        // Function to render the forms in the table
-        function renderForms(data) {
-    const tableBody = document.querySelector("#forms-table tbody");
-    tableBody.innerHTML = ''; // Clear existing rows
-
-    // Combine forms and notifications arrays
-    const allForms = [...(data.forms || []), ...(data.notifications || [])];
-
-    if (allForms.length === 0) {
-        const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `
-            <td colspan="3" class="text-center py-4">
-                No forms found. Create a new form to get started.
-            </td>
-        `;
-        tableBody.appendChild(emptyRow);
-        return;
-    }
-
-    allForms.forEach(form => {
-        const row = document.createElement('tr');
-        const createdAt = new Date(form.created_at).toLocaleDateString();
-        row.innerHTML = `
-            <td>${form.title}</td>
-            <td>${form.description || ''}</td>
-            <td>
-                <a href="/staff/view_form?form_id=${form.id}" class="form-link">View/Edit</a>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
-
-        // Initial fetch when the page loads
-        // Initial fetch when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    fetchForms();
-});
-        // Remove the modal-related code since we're now navigating to a new page
-        // Remove openModal and closeModal functions
-    </script>
-
+<script src="{{ url_for('static', filename='js/staff_forms_table.js') }}"></script>
 </body>
 
 </html>

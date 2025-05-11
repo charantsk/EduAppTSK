@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu Tutor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student.css') }}"> <!-- Link to local student_css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}"> <!-- Link to local student_css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tutor.css') }}"> <!-- Link to local student_css -->
+</head>
+<body>
+
+    {% include 'student_navbar.html' %}
+    <div class="chat-container">
+        <div class="chat-header" style="display: flex; align-items: center;">
+            <h1 style="margin-bottom:0px;">Tutor</h1>
+            <i class="fas fa-info-circle" style="margin-left: 8px; cursor: pointer;" 
+               onclick="toggleInfo()"></i>
+            <span id="info-text" style="display: none; margin-left: 8px; font-size: 14px; color: gray;">
+                This AI tutor assists students by explaining concepts, generating sample questions, 
+                creating practice tests, and providing study guidance. Use it to enhance your learning experience.
+            </span>
+        </div>
+        
+        <script>
+        function toggleInfo() {
+            var infoText = document.getElementById("info-text");
+            infoText.style.display = infoText.style.display === "none" ? "inline" : "none";
+        }
+        </script>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be inserted here -->
+        </div>
+        <div class="chat-input">
+            <div class="input-container">
+                <div class="input-box">
+                    <textarea 
+                        placeholder="Type your message..." 
+                        id="message-input"
+                        rows="1"
+                        onInput="autoResize(this)"
+                    ></textarea>
+                    <div class="input-actions">
+                        <input type="file" id="file-input" class="file-input" multiple>
+                        <button class="attach-btn" onclick="document.getElementById('file-input').click()">
+                            <i class="fas fa-paperclip"></i>
+                            Attach
+                        </button>
+                    </div>
+                </div>
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/js_snippets/tutor.js') }}"></script>
+</body>
+</html>

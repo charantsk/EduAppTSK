@@ -3,6 +3,9 @@ let isSubmitting = false;
 let isSurveyForm = false;
 let resizeTimeout = null;
 let timer = null;
+let resizeStrikes = 0;
+let visibilityStrikes = 0;
+const MAX_STRIKES = 3;
 
 // Get the form ID from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
@@ -48,7 +51,7 @@ function collectResponses() {
     return responses;
 }
 
-async function submitForm(responses) {
+async function submitForm(responses, autoSubmitReason = null) {
     if (isSubmitting) return;
     isSubmitting = true;
 
@@ -59,7 +62,10 @@ async function submitForm(responses) {
                 'Content-Type': 'application/json',
             },
             credentials: 'same-origin',
-            body: JSON.stringify({ responses }),
+            body: JSON.stringify({ 
+                responses,
+                autosubmitted: autoSubmitReason 
+            }),
         });
 
         if (!response.ok) {
@@ -88,7 +94,35 @@ function handleAutoSubmit() {
         const responses = collectResponses();
         if (Object.keys(responses).length > 0) {
             if (timer) clearInterval(timer);
-            submitForm(responses);
+            submitForm(responses, 'time_expired');
+        }
+    }
+}
+
+function handleVisibilityAutoSubmit() {
+    if (!isSurveyForm && formData && formData.questions) {
+        visibilityStrikes++;
+        console.warn(`Tab switch warning: Strike ${visibilityStrikes}/${MAX_STRIKES}`);
+        
+        if (visibilityStrikes >= MAX_STRIKES) {
+            const responses = collectResponses();
+            if (Object.keys(responses).length > 0) {
+                submitForm(responses, 'User Switched Tabs 3 Times');
+            }
+        }
+    }
+}
+
+function handleResizeAutoSubmit() {
+    if (!isSurveyForm && formData && formData.questions) {
+        resizeStrikes++;
+        console.warn(`Resize warning: Strike ${resizeStrikes}/${MAX_STRIKES}`);
+        
+        if (resizeStrikes >= MAX_STRIKES) {
+            const responses = collectResponses();
+            if (Object.keys(responses).length > 0) {
+                submitForm(responses, 'window_resized_three_times');
+            }
         }
     }
 }
@@ -99,8 +133,15 @@ function handleResize() {
             clearTimeout(resizeTimeout);
         }
         resizeTimeout = setTimeout(() => {
-            handleAutoSubmit();
+            handleResizeAutoSubmit();
         }, 1000);
+    }
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
@@ -115,13 +156,15 @@ function renderForm(form) {
 
     console.log(form);
 
-    // Check if there is a time limit and display it
     if (form.time_limit) {
         const timeLimitElement = document.createElement('div');
         timeLimitElement.className = 'time-limit';
         formElement.appendChild(timeLimitElement);
         startTimer(form.time_limit);
     }
+
+    // Shuffle questions before rendering
+    shuffleArray(form.questions);
 
     form.questions.forEach(question => {
         const formGroup = document.createElement('div');
@@ -138,7 +181,7 @@ function renderForm(form) {
         formGroup.appendChild(label);
 
         let input;
-        switch(question.type) {
+        switch (question.type) {
             case 'single_word':
                 input = document.createElement('input');
                 input.type = 'text';
@@ -148,19 +191,17 @@ function renderForm(form) {
                 break;
             case 'true_false':
                 input = document.createElement('select');
-                const optionYes = document.createElement('option');
-                optionYes.value = 'true';
-                optionYes.textContent = 'true';
-                const optionNo = document.createElement('option');
-                optionNo.value = 'false';
-                optionNo.textContent = 'false';
-                input.appendChild(optionYes);
-                input.appendChild(optionNo);
+                ['true', 'false'].forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    input.appendChild(option);
+                });
                 break;
             case 'attachment':
                 input = document.createElement('input');
                 input.type = 'file';
-                input.addEventListener('change', function(event) {
+                input.addEventListener('change', function (event) {
                     const file = event.target.files[0];
                     if (file && file.size > 50 * 1024 * 1024) {
                         alert('File size should be less than 50MB.');
@@ -193,7 +234,7 @@ function renderForm(form) {
                 defaultOption.disabled = true;
                 input.appendChild(defaultOption);
                 
-                if (question.choices && Array.isArray(question.choices)) {
+                if (Array.isArray(question.choices)) {
                     question.choices.forEach(choice => {
                         const option = document.createElement('option');
                         option.value = choice;
@@ -216,6 +257,7 @@ function renderForm(form) {
                 
                 checkboxWrapper.appendChild(input);
                 checkboxWrapper.appendChild(checkboxLabel);
+                formGroup.appendChild(checkboxWrapper);
                 break;
             default:
                 input = document.createElement('input');
@@ -227,11 +269,10 @@ function renderForm(form) {
         input.required = true;
         input.className = question.type === 'checkbox' ? 'form-control checkbox' : 'form-control';
 
-        if (question.type === 'checkbox') {
-            formGroup.appendChild(input.parentElement);
-        } else {
+        if (question.type !== 'checkbox') {
             formGroup.appendChild(input);
         }
+        
         formElement.appendChild(formGroup);
     });
 
@@ -306,7 +347,7 @@ window.addEventListener('beforeunload', function(e) {
 
 document.addEventListener('visibilitychange', function() {
     if (!isSurveyForm && document.visibilityState === 'hidden') {
-        handleAutoSubmit();
+        handleVisibilityAutoSubmit();
     }
 });
 

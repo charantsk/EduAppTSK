@@ -282,7 +282,7 @@
         <div class="hero-content">
             <h1>Transform Your Learning Journey</h1>
             <p>Discover a new way of learning with our interactive platform designed for modern education.</p>
-            <a href="{{ url_for('login_page') }}" class="cta-button">Login</a>
+            <a href="{{ url_for('view.login_page') }}" class="cta-button">Login</a>
         </div>
     </section>
 
@@ -317,66 +317,6 @@
             <p><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a> • <a href="#">Contact Us</a></p>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const navLinks = document.querySelector('.nav-links');
-
-        mobileMenu.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Feature cards animation on scroll
-        const cards = document.querySelectorAll('.feature-card');
-
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        cards.forEach(card => {
-            observer.observe(card);
-        });
-
-        // Navbar scroll behavior
-        const navbar = document.querySelector('.navbar');
-        let lastScroll = 0;
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll <= 0) {
-                navbar.style.transform = 'translateY(0)';
-                return;
-            }
-            
-            if (currentScroll > lastScroll && !navLinks.classList.contains('active')) {
-                navbar.style.transform = 'translateY(-100%)';
-            } else {
-                navbar.style.transform = 'translateY(0)';
-            }
-            
-            lastScroll = currentScroll;
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/js_snippets/index.js') }}"></script>
 </body>
 </html>

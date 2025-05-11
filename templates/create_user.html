@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create User</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <style>
         :root {
-            --primary-color: #3498db;
+            --primary-color: #5046e5;
             --primary-dark: #2980b9;
             --text-color: #2c3e50;
             --error-color: #e74c3c;
@@ -36,11 +36,12 @@
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: fit-content;
             background: white;
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: auto;
         }
 
         h1 {
@@ -112,82 +113,104 @@
                 padding: 0.7rem;
             }
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border: 0px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .role-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
-
     {% include 'staff_navbar.html' %}
 
-    <div class="container">
-        <h1>Create User</h1>
-        <form id="createUserForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%;">
+        <div class="container">
+            <h1>Create Profile</h1>
+            <form id="createUserForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select a role</option>
+                    </select>
+                </div>
+                <div class="form-group" id="class_group_container" style="display: none;">
+                    <label for="class_group">Class Group</label>
+                    <select id="class_group" name="class_group">
+                        <option value="">Select a class group</option>
+                    </select>
+                </div>
+                <button type="submit">Create User</button>
+            </form>
+            <div class="error" id="errorMessage"></div>
+        </div>
+        
+        <div class="container" id="userListContainer">
+            <h2>Manage Profiles</h2>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <div class="form-group">
-                <label for="role">Role</label>
-                <select id="role" name="role" required>
-                    <option value="">Select a role</option>
-                    <option value="staff">Staff</option>
-                    <option value="student">Student</option>
+            <div>
+                <label for="roleFilter">Filter by Role:</label>
+                <select id="roleFilter">
+                    <option value="">All</option>
+                    <option value="STUDENT">Student</option>
+                    <option value="STAFF">Staff</option>
                 </select>
             </div>
-
-            <button type="submit">Create User</button>
-        </form>
-        <div class="error" id="errorMessage"></div>
+            
+            <table id="userTable" border="1">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Class Group</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-    <script>
-        // Your existing JavaScript remains the same
-        document.getElementById('createUserForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-    
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-    
-            const data = {
-                username: username,
-                password: password,
-                role: role
-            };
-    
-            if (email.trim()) {
-                data.email = email;
-            }
-    
-            fetch('/api/users/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('errorMessage').textContent = data.error;
-                } else {
-                    window.location.href = '/dashboard';
-                }
-            })
-            .catch(error => {
-                document.getElementById('errorMessage').textContent = 'Something went wrong. Please try again.';
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/js_snippets/create_user.js') }}"></script>
 </body>
 </html>
